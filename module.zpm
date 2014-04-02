@@ -1,0 +1,1316 @@
+<@ Init @>
+<div class="zmodule_content panel" id="zmodule_header_<@ ModuleName @>">
+    <div class="panel-heading">
+        <img src="<@ ModuleIcon @>" width="35" height="35" border="0" alt="<@ ModuleName @>">
+
+        <div class="zmodule_title">
+            <@ ModuleName @>
+        </div>
+
+        <div class="zmodule_desc" id="zmodule_desc_<@ ModuleName @>"><@ ModuleDesc @></div>
+        <div class="xbilling-version"><@ ModuleVersion @></div>
+	<form action="./?module=xbilling" method="post" id="xbilling_navForm">
+        	<input type="hidden" id="xbilling_view" name="view" value="<@ View @>">        
+	</form>
+
+    </div>
+
+<!-- START - Check for updates added by TGates -->
+        <% if CheckUpdate %>
+            <table class="zgrid">
+                <tr>
+                      <div class="xbilling-updated"><b><: New Version Available :></div>
+                </tr>
+            </table>
+        <% endif %>
+<!-- END - Check for updates added by TGates -->
+
+<@ Result @>
+
+<% if isModuleInstalled %>
+<div align="right" class="clearfix">
+    <img id="add_account" src="modules/xbilling/assets/icon_add_field.png" hspace="5" onclick="javascript:_view('new_account');" style="cursor: pointer;" alt="create new account" title="create new account"  /> <a href="javascript:_view('new_account');" title="create new account">Create New Account</a>
+</div>
+<div class="clearfix">&nbsp;</div>
+<ul class="nav nav-tabs section-tabs">
+  <@ ModuleNav @>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+<div class="tab-pane <% if ViewSettings %>active<% endif %>" id="website_settings">
+<% if ViewSettings %>
+        <div align="right" class="top-margin-ten bottom-margin-twenty">
+            <strong>Important Downloads:</strong> <a href="./?module=xbilling&action=FetchConfig" target="_blank" class="btn btn-info btn-mini">Front-end Config Script</a>&nbsp;<a href="http://zpx.imerlabs.com/frontend_billing.zip" class="btn btn-default btn-mini">Front-end Billing Package</a>&nbsp;<a href="http://zpx.imerlabs.com/manuals/xbilling_manual.pdf" target="_blank" class="btn btn-warning btn-mini">Application Manual</a>&nbsp;
+        </div>
+    <div class="zform_wrapper">
+        <table class="table table-stripped">
+            <tr valign="top"><td>
+                    <!-- <h2>Website Settings</h2> -->
+                     <form action="./?module=xbilling&action=UpdateSettings" method="post" name="frmUpdateSettings">
+                        <table class="zform">
+                            <tr>
+                                <th nowrap="nowrap"><: Company Name :>:</th>
+                                <td><input name="company_name" type="text" id="company_name" value="<@ EditCompanyName @>" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Email Address :>:</th>
+                                <td><input name="email_address" type="text" id="email_address" value="<@ EditEmailAddress @>" /></td>
+                            </tr>
+                            <!-- <tr>
+                                <th nowrap="nowrap"><: Company Logo Path :>:</th>
+                                <td><input name="company_logo_path" type="file" id="company_logo_path" value="" /></td>
+                            </tr> -->
+                            <tr>
+                                <th nowrap="nowrap"><: Company Logo Path :>:</th>
+                                <td><input name="company_logo_path" type="text" id="company_logo_path" value="<@ EditLogoPath @>" size="35" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Billing URL :>:</th>
+                                <td><input name="website_billing_url" type="text" id="website_billing_url" value="<@ EditBillingURL @>" size="35" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: URL Protocol :>:</th>
+                                <td>
+                                    <select name="url_protocol" id="url_protocol">
+                                      <% loop EditURLProtocol %>
+                                         <option value="<& protocol &>"<& selected_yn &>><& label &></option>
+                                      <% endloop %>
+                                    </select>                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Country Code :>:</th>
+                                <td><input name="country_code" type="text" id="country_code" value="<@ EditCountryCode @>" size="5" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Currency :>:</th>
+                                <td><input name="currency" type="text" id="currency" value="<@ EditCurrency @>" size="5" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Disable Free Hosting :>:</th>
+                                <td><input name="billing_enabled_yn" type="checkbox" id="billing_enabled_yn" value="1"<@ EditBillingEnabled @> />&nbsp;&nbsp;<: Check if you wish to provide free web hosting to your users. :></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Invoice Reminder Days :>:</th>
+                                <td><input name="invoice_reminder_days" type="text" id="invoice_reminder_days" size="5" value="<@ EditInvoiceReminderDays @>" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Delete Account If Invoice Unpaid for :>:</th>
+                                <td>
+                                    <input name="pending_invoice_delete_days" type="text" id="pending_invoice_delete_days" size="5" value="<@ EditPendingInvoiceDeleteDays @>" /> <: days :>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Renewal Reminder Days :>:</th>
+                                <td><input name="renewal_reminder_days" type="text" id="renewal_reminder_days" size="5" value="<@ EditRenewalDays @>" size="5" /></td>
+                            </tr>
+                            <!-- <tr>
+                                <th nowrap="nowrap"><: Payment Success Page :>:</th>
+                                <td><input name="payment_success_url" type="text" id="payment_success_url" value="<@ EditPaymentSuccessURL @>" size="40" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Payment Failure Page :>:</th>
+                                <td><input name="payment_failure_url" type="text" id="payment_failure_url" value="<@ EditPaymentFailureURL @>" size="40" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Payment Cancellation Page :>:</th>
+                                <td><input name="payment_cancel_url" type="text" id="payment_cancel_url" value="<@ EditPaymentCancelURL @>" size="40" /></td>
+                            </tr> -->
+                            <tr>
+                                <th nowrap="nowrap"><: reCaptcha Settings :>:</th>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Disable reCaptcha :>:</th>
+                                <td><input name="recaptcha_disabled_yn" type="checkbox" id="recaptcha_disabled_yn" value="1"<@ EditReCaptchaEnabled @> onclick="_toggle_recaptcha();" />&nbsp;&nbsp;<: Disable reCaptcha :></td>
+                            </tr>                            
+                            <tr id="td_recaptcha_public_key">
+                                <th nowrap="nowrap"><: Public Key :>:</th>
+                                <td><input name="recaptcha_public_key" type="text" id="recaptcha_public_key" value="<@ EditReCaptchaPublicKey @>" size="45" /></td>
+                            </tr>
+                            <tr id="td_recaptcha_private_key">
+                                <th nowrap="nowrap"><: Private Key :>:</th>
+                                <td><input name="recaptcha_private_key" type="text" id="recaptcha_private_key" value="<@ EditReCaptchaPrivateKey @>" size="45" /></td>
+                            </tr>  
+                            <tr>
+                                <th nowrap="nowrap"><: Enable Logs :>:</th>
+                                <td>
+                                    <select name="logs_enabled_yn" id="logs_enabled_yn">
+                                      <% loop EditLogsEnabled %>
+                                         <option value="<& id &>"<& selected_yn &>><& label &></option>
+                                      <% endloop %>
+                                    </select>                                
+                                </td>
+                            </tr>
+
+                             <tr>
+                                <th></th>
+                                <td>
+                                	<br />
+                                	<button class="btn btn-primary" type="submit" id="button" name="SaveSettings" value="1">Save</button></td>
+                            </tr>
+                        </table>
+                        <!-- <input type="hidden" id="method_id" name="method_id" value=""> -->
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+                </td>
+            </tr>
+        </table>	
+    </div>
+
+<% else %>
+	<: Please wait :>...
+<% endif %>
+  </div>
+
+<div class="tab-pane<% if ViewEmailSettings %> active<% endif %>" id="email_settings">
+<% if ViewEmailSettings %>
+	<div class="clearfix">&nbsp;</div>
+                     <form action="./?module=xbilling&action=UpdateEmailSettings" method="post" name="frmUpdateEmailSettings">
+                        <table class="table table-stripped">
+			    <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Email Format :>:</th>
+                                <td>
+                                        <select name="email_format" id="slt_email_format">
+                                        <% loop EditEmailFormatList %>
+                                            <option value="<& value &>" <& selected &>><& format &></option>
+                                        <% endloop %>
+                                        </select>                                    
+                                </td>
+                            </tr>
+			    <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Order Email :>:</th>
+                                <td>
+                                    <textarea rows="5" cols="45" name="order_message" id="txt_order_message"><@ EditOrderMessage @></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Welcome Message :>:</th>
+                                <td>
+                                    <textarea rows="5" cols="45" name="welcome_message" id="txt_welcome_message"><@ EditWelcomeMessage @></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Invoice Reminder Message :>:</th>
+                                <td>
+                                    <textarea rows="5" cols="45" name="invoice_reminder_message" id="txt_invoice_reminder_message"><@ EditInvoiceReminderMessage @></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Renewal Reminder Message :>:</th>
+                                <td>
+                                    <textarea rows="5" cols="45" name="renewal_reminder_message" id="txt_renewal_reminder_message"><@ EditRenewalReminderMessage @></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Renewal Message :>:</th>
+                                <td>
+                                    <textarea rows="5" cols="45" name="renewal_message" id="txt_renewal_message"><@ EditRenewalMessage @></textarea>
+                                </td>
+                            </tr>
+                            
+                             <tr>
+                                <th></th>
+                                <td>
+                                	<br />
+                                	<button class="btn btn-primary" type="submit" id="button" name="SaveSettings" value="1">Save</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    
+
+<% endif %>
+</div>
+<div class="tab-pane<% if ViewPeriods %> active<% endif %>" id="service_periods">
+<% if ViewPeriods %>
+    
+
+     <% if isEditPeriod %>
+	  <div class="clearfix">&nbsp;</div>
+            <div class="panel panel-info">
+		        <div class="panel-heading"><: Edit Service Plan :></div>
+                     <form action="./?module=xbilling&action=UpdatePeriod" method="post" name="frmUpdatePeriod">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Period duration :>:</th>
+                                <td>
+                                <!-- <input name="period_duration" type="text" id="period_duration" size="5" value="<@ EditPeriodDuration @>" /> --> 
+                                        <select name="period_duration" id="period_duration">
+                                        <% loop NumberCountLoop %>
+                                            <option value="<& num &>" <& selected &>><& num &></option>
+                                        <% endloop %>
+                                        </select> <: months :>
+                                 </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Amount :>:</th>
+                                <td><input name="period_amount" type="text" id="period_amount" size="5" value="<@ EditPeriodAmount @>" /> <@ SettingCurrency @></td>
+                            </tr>
+                             <tr>
+                                <th></th>
+                                <td>
+                                <button class="btn btn-primary" type="submit" id="btn_x_update" name="UpdatePeriod" value="1">Update</button> &nbsp;
+                                <button class="btn btn-warning cancel-action" data-rel="service_periods" type="button" id="btn_x_update" name="UpdatePeriod" value="1">Cancel</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="period_id" name="period_id" value="<@ CurrentPeriodID @>">
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+                </div>	
+
+    <% endif %>
+
+   <div class="zgrid_wrapper">
+        <!-- <h2><: Service Periods :></h2> -->
+        <div class="clearfix">&nbsp;</div>
+        <% if ServicePeriods %>
+        <div class="panel panel-default">
+        <div class="panel-heading"><: Service Plans :></div>
+        <form action="./?module=xbilling" method="post" id="frmServicePeriod">
+            <table class="table table-stripped table-bordered">
+                <tr>
+                    <th><: Duration :></th>
+                    <th><: Amount :></th>
+                    <th></th>
+                </tr>
+                <% loop ServicePeriods %>
+                <tr>
+                    <td><& duration &> months</td>
+                    <td><& amount &> <@ SettingCurrency @></td>
+                    <td><button class="btn btn-info btn-mini" type="submit" id="button" name="inEdit_<& id &>" id="inEdit_<& id &>" value="inEdit_<& id &>" onclick="_change_action('frmServicePeriod','EditPeriod', '<& id &>');"><: Edit :></button>&nbsp;&nbsp;<button class="btn btn-danger btn-mini delete-plan" type="button" data-id="<& id &>" value="inDelete_<& id &>"><: Delete :></button>
+                    </td>
+                </tr>			
+                <% endloop %>
+            </table>
+            <input type="hidden" id="item_id" name="period_id" value="0">
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+        </div>
+        <% else %>
+        <: You currently do not have any service plan configured. Create a service plan using the form below. :>
+        <div class="clearfix">&nbsp;</div>
+        <% endif %>
+    </div>
+    <% if isAddPeriod %>
+    <div class="zform_wrapper">                       
+                    <div class="panel panel-info">
+		        <div class="panel-heading"><: Create a new Service Plan :></div>
+                     <form action="./?module=xbilling&action=CreatePeriod" method="post" name="frmCreatePeriod">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Period duration :>:</th>
+                                <td class="vertical-baseline">
+                                	<!-- <input name="period_duration" type="text" id="period_duration" size="5" /> -->
+                                        <select name="period_duration" id="period_duration">
+                                        <% loop NumberCountLoop %>
+                                            <option value="<& num &>"<& selected_yn &>><& num &></option>
+                                        <% endloop %>
+                                        </select>                                    
+                                	
+                                	 <: months :></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Amount :>:</th>
+                                <td class="vertical-baseline"><input name="period_amount" type="text" id="period_amount" size="5" /> <@ SettingCurrency @></td>
+                            </tr>
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="CreatePeriod" value="1">Create</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+                    </div>	
+    </div>
+    <% endif %>
+<% endif %>
+</div>
+
+<div class="tab-pane<% if ViewPackages %> active<% endif %>" id="packages">
+<% if ViewPackages %>
+
+   <div class="zgrid_wrapper">
+        <!-- <h2><: Hosting Package Settings :></h2> -->
+        <% if ServicePackages %>
+        <!-- <div id="div_package_periods" style="float: right; margin-right: 10px; width: 200px; margin-top: 30px; display: none;">
+            <form action="./?module=xbilling&action=UpdatePackagePeriods" method="post" id="frmPackagesPeriods" onsubmit="return _update_package_periods();">
+            <fieldset style="padding-top: 0px;">
+                <legend class="legendhead" style="font-size: 12px; margin-bottom: 0px;">Edit Package Prices</legend>
+            
+            <div id="div_child_periods" style="padding-left: 5px;" align="center">
+                &nbsp;
+            </div>
+            </fieldset>
+            </form>
+        </div> -->
+        <div class="clearfix">&nbsp;</div>
+        <form action="./?module=xbilling&action=UpdatePackages" method="post" id="frmServicePackages">
+            <table class="table table-stripped">
+                <tr>
+                    <th><: Package :></th>
+                    <th><: Description :></th>
+                    <th><: Enabled :>?</th>
+                    <th><: Free :>?</th>
+                    <th><: Service Plans :></th>
+                </tr>
+                <% loop ServicePackages %>
+                <tr>
+                    <td><& name &></td>
+                    <td><textarea rows="3" cols="30" name="pkg_desc[<& id &>]"><& desc &></textarea></td>
+                    <td style="text-align: center;"><input type="checkbox" name="enabled_yn[<& id &>]" id="enabled_yn_<& id &>" value="1" <& enabled_yn &> /></td>
+                    <td style="text-align: center;"><input type="checkbox" name="free_yn[<& id &>]" id="free_yn_<& id &>" value="1" <& free_yn &> onclick="_free_pkg('<& id &>');" /></td>
+                    <td><a href="javascript:_package_periods('<& id &>');" id="manage_periods_<& id &>"><: Manage :></a></td>
+                </tr>			
+                <% endloop %>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="4"><button class="btn btn-primary" type="submit" id="button" name="btn_save" id="btn_save" value="1"><: Save :></button>
+                    </td>
+                </tr>			
+            </table>
+            <input type="hidden" id="item_id" name="package_id" value="0">
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+        <% else %>
+        <: You currently do not have any hosting packages configured. You need to have at least one hosting package. :>
+        <div class="clearfix">&nbsp;</div>
+        <% endif %>
+     </div>
+
+<% endif %>
+</div>
+
+<div class="tab-pane<% if ViewPaymentMethods %> active<% endif %>" id="payment_methods">
+<% if ViewPaymentMethods %>
+    <% if isDeleteMethod %>
+    <div class="zform_wrapper">
+        <h2><: Delete Payment Method :>: <@ CurrentPaymentMethod @>?</h2>
+        <p><: Please confirm that you want to delete this payment method. :></p>
+        <form action="./?module=xbilling&action=DeletePaymentMethod" method="post" id="frmDeleteMethod">
+            <table class="table table-stripped" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td colspan="2" align="right">
+                        <input type="hidden" name="method_id" value="<@ CurrentPaymentMethodID @>">
+                        <button class="fg-button ui-state-default ui-corner-all" type="submit" ><: Delete :></button>
+                        <button class="fg-button ui-state-default ui-corner-all" type="button" onclick="_change_action('frmDeleteMethod','', '0');return false;"><: Cancel :></button>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+    </div>
+    <% endif %>
+
+     <% if isEditMethod %>
+	<div class="panel panel-info">
+        	<div class="panel-heading"><: Edit Payment Option :></div>
+        	<div id="edit_payment_method_msg" class="alert alert-danger" style="display: none;"></div>
+                     <form action="./?module=xbilling&action=UpdatePaymentMethod" method="post" name="frmUpdateMethod" id="frm_update_payment_method">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Payment Method :>:</th>
+                                <td>
+                                    <!-- <input name="method_name" type="text" id="method_name" value="<@ CurrentPaymentMethod @>" /> -->
+                                        <select name="payment_option_id" id="payment_option_id" onchange="_reload_option_fields();">
+                                            <!-- <option value="0"> please select </option> -->
+                                        <% loop PaymentOptions %>
+                                            <option value="<& id &>"<& selected_yn &>><& name &></option>
+                                        <% endloop %>
+                                        </select>                                    
+                                    
+                                    </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Enabled :>:</th>
+                                <td><input type="checkbox" name="enabled_yn" id="enabled_yn" value="1" <@ EditPaymentMethodEnabled @> /></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="padding: 0px;">
+                                    <table width="100%" id="payment_option_fields">
+                                    
+                                    </table>
+                                </td>
+                            </tr>                            
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="UpdateMethod" value="1">Update</button>  <button class="btn btn-warning cancel-action" type="button" id="btn_x_update" name="CancelEditPaymentMethod" data-rel="payment_methods">Cancel</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="method_id" name="method_id" value="<@ CurrentPaymentMethodID @>">
+                        <input type="hidden" id="payment_option_id" name="payment_option_id" value="<@ CurrentPaymentOptionID @>">
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+    </div>
+    <% endif %>
+
+   <div class="zgrid_wrapper">
+        <div class="clearfix">&nbsp;</div>
+	<div class="panel panel-default">
+        	<div class="panel-heading"><: Payment Methods :></div>        
+        
+        <% if PaymentMethods %>
+        <form action="./?module=xbilling" method="post" id="frmPaymentMethod">
+            <table class="table table-stripped table-bordered">
+                <tr>
+                    <th><: Payment Method :></th>
+                    <th><: Enabled :></th>
+                    <th></th>
+                </tr>
+                <% loop PaymentMethods %>
+                <tr>
+                    <td><& method_name &></td>
+                    <td><& enabled_yn &></td>
+                    <td><button class="btn btn-info btn-mini" type="submit" id="button" name="inEdit_<& id &>" id="inEdit_<& id &>" value="inEdit_<& id &>" onclick="_change_action('frmPaymentMethod','EditPaymentMethod', '<& id &>');"><: Edit :></button>
+                    <!-- &nbsp;&nbsp;<button class="btn btn-danger" type="submit" id="button" name="inDelete_<& id &>" id="inDelete_<& id &>" value="inDelete_<& id &>" onclick="_change_action('frmPaymentMethod','ConfirmDeletePaymentMethod', '<& id &>');"><: Delete :></button> -->
+                    </td>
+                </tr>			
+                <% endloop %>
+            </table>
+            <input type="hidden" id="item_id" name="method_id" value="0">
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+        <% else %>
+        <: You currently do not have any payment methods configured. Configure a payment method using the form below. :>
+        <div class="clearfix">&nbsp;</div>
+        <% endif %>
+        </div>
+    </div>
+    <% if isAddMethod %>
+        <div class="clearfix">&nbsp;</div>
+	<div class="panel panel-info">
+        	<div class="panel-heading"><: Add Payment Method :></div>                
+                     <div id="new_payment_method_msg" class="alert alert-danger" style="display: none;"></div>
+                     <form action="./?module=xbilling&action=CreatePaymentMethod" method="post" name="frmCreateMethod" id="frm_create_payment_method">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Payment Method :>:</th>
+                                <td>
+                                    <!-- <input name="method_name" type="text" id="method_name" /> -->
+                                    <select name="payment_option_id" id="payment_option_id" onchange="_reload_option_fields();">
+                                        <!-- <option value="0"> please select </option> -->
+                                    <% loop PaymentOptions %>
+                                        <option value="<& id &>"><& name &></option>
+                                    <% endloop %>
+                                    </select>                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Enabled :>:</th>
+                                <td><input type="checkbox" name="enabled_yn" id="enabled_yn" value="1" /></td>
+                            </tr>                            
+                            <!-- <tr>
+                                <th nowrap="nowrap"><: Form Fields :>:</th>
+                                <td>&nbsp;</td>
+                            </tr> -->
+                            <tr>
+                                <td colspan="2" style="padding: 0px;">
+                                    <table width="100%" id="payment_option_fields" class="zform">
+                                    
+                                    </table>
+                                </td>
+                            </tr>
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="CreateMethod" value="1">Add Payment Method</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>	
+    </div>
+    <% endif %>
+<% endif %>
+</div>
+
+<div class="tab-pane<% if ViewPaymentOptions %> active<% endif %>" id="payment_options">
+<div class="clearfix">&nbsp;</div>
+<% if ViewPaymentOptions %>
+     <% if isEditPaymentOption %>
+    <div class="panel panel-info">
+        	<div class="panel-heading"><: Edit Payment Option :></div> 
+        	<div id="edit_payment_option_msg" class="alert alert-danger" style="display: none;"></div>
+                     <form action="./?module=xbilling&action=UpdatePaymentOption" method="post" name="frmUpdatePaymentOption" id="frm_update_payment_option">
+                        <table class="table table-stripped" id="payment_option">
+                            <tr>
+                                <th nowrap="nowrap"><: Title :>:</th>
+                                <td colspan="3"><input name="option_name" type="text" value="<@ CurrentPaymentOption @>" id="txt_payment_option_name" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Enabled :>:</th>
+                                <td colspan="3"><input type="checkbox" name="enabled_yn" id="enabled_yn" value="1" <@ EditPaymentOptionEnabled @> /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Fields :>:</th>
+                                <td colspan="3">Field names must be a valid string.</td>
+                            </tr>
+                            <@ EditPaymentOptionFields @>
+                            <tr>
+                                <th nowrap="nowrap" valign="top"><: Form HTML :>:</th>
+                                <td colspan="3"><textarea cols="45" rows="5" name="payment_option_form_html" id="txt_payment_option_form_html"><@ EditPaymentOptionHTML @></textarea></td>
+                            </tr>                            
+                             <tr>
+                                <th></th>
+                                <td colspan="3">
+                                <button class="btn btn-primary" type="submit" id="button" name="UpdatePaymentOption" value="1">Update</button>  <button class="btn btn-warning cancel-action" type="button" id="btn_x_update" name="CancelEditPaymentOption" data-rel="payment_options">Cancel</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="option_id" name="option_id" value="<@ CurrentPaymentOptionID @>">
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>                
+    </div>
+    <% endif %>
+
+   <div class="zgrid_wrapper">
+        <div class="clearfix">&nbsp;</div>
+	<div class="panel panel-default">
+        	<div class="panel-heading"><: Payment Options :></div>        
+        <% if PaymentOptions %>
+        <form action="./?module=xbilling" method="post" id="frmPaymentOption">
+            <table class="table table-stripped table-bordered">
+                <tr>
+                    <th><: Payment Option :></th>
+                    <th><: Enabled :></th>
+                    <th><: Fields :></th>
+                    <th></th>
+                </tr>
+                <% loop PaymentOptions %>
+                <tr>
+                    <td><& name &></td>
+                    <td><& enabled_yn &></td>
+                    <td><& field_names &></td>
+                    <td><button class="btn btn-info btn-mini" type="submit" id="button" name="inEdit_<& id &>" id="inEdit_<& id &>" value="inEdit_<& id &>" onclick="_change_action('frmPaymentOption','EditPaymentOption', '<& id &>');"><: Edit :></button>&nbsp;&nbsp;<button class="btn btn-danger btn-mini delete-payment-option" type="button" id="button" name="inDelete_<& id &>" id="inDelete_<& id &>" value="inDelete_<& id &>" data-id="<& id &>"><: Delete :></button>
+                    </td>
+                </tr>			
+                <% endloop %>
+            </table>
+            <input type="hidden" id="item_id" name="option_id" value="0">
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+        <% else %>
+        <: You currently do not have any payment options configured. Add a payment option using the form below. :>
+        <div class="clearfix">&nbsp;</div>
+        <% endif %>
+        </div>
+    </div>
+    <% if isAddPaymentOption %>
+    <div class="zform_wrapper">
+        <div class="panel panel-info">
+        	<div class="panel-heading"><: Add a Payment Option :></div>        
+                     <form action="./?module=xbilling&action=CreatePaymentOption" method="post" name="frmCreatePaymentOption" id="frm_create_payment_option">
+                     <div id="new_payment_option_msg" class="alert alert-danger" style="display: none;"></div> 
+                        <table class="table table-stripped" id="payment_option">
+                            <tr>
+                                <th nowrap="nowrap"><: Title :>:</th>
+                                <td colspan="3"><input name="option_name" type="text" id="txt_payment_option_name" size="40" /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Enabled :>:</th>
+                                <td colspan="3"><input type="checkbox" name="enabled_yn" id="enabled_yn" value="1" checked="checked" /></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: Fields :>:</th>
+                                <td colspan="3">Field names must be a valid string.</td>
+                            </tr>
+                            <tr id="payment_field_1">
+                                <th nowrap="nowrap"><: Label :>:</th>
+                                <td><input name="field_labels[1]" type="text" value="" /></td>
+                                <th nowrap="nowrap"><: Field Name :>:</th>
+                                <td><input name="field_names[1]" type="text" value="" /></td>
+                                <td><img id="add_field_1" src="<@ ModuleDir @>/assets/icon_add_field.png" hspace="5" onclick="add_payment_field('payment_field_1');" style="cursor: pointer;" alt="add new field"  title="add new field"  /></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap" valign="top"><: Form HTML :>:</th>
+                                <td colspan="3"><textarea cols="45" rows="5" name="payment_option_form_html" id="txt_payment_option_form_html"></textarea></td>
+                            </tr>                                                        
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="CreatePaymentOption" value="1">Add Payment Option</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+                </div>	
+    </div>
+    <% endif %>
+<% endif %>
+</div>
+
+<div class="tab-pane<% if ViewOrdersInvoices %> active<% endif %>" id="invoices_orders">
+<% if ViewOrdersInvoices %>
+        <div class="clearfix">&nbsp;</div>
+        <% if isViewOrder %>
+	<div class="panel panel-info">
+        	<div class="panel-heading"><: Order Details :></div>                        
+                     <form action="./?module=xbilling" method="post" name="frmViewOrder">
+                        <table class="table table-stripped" id="view_order">
+                            <tr>
+                                <th nowrap="nowrap"><: Order  :>#:</th>
+                                <td><@ OrderInfoReference @></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Date :>:</th>
+                                <td><@ OrderInfoDate @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: User :>:</th>
+                                <td><@ OrderInfoUser @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: Description :>:</th>
+                                <td><@ OrderInfoDescription @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: Invoice Amount :>:</th>
+                                <td><@ OrderInfoAmount @> <@ SettingCurrency @></td>
+                            </tr>
+                            <% if OrderInfoVoucher %>
+                            <tr>
+                                <th nowrap="nowrap"><: Voucher :>:</th>
+                                <td><@ OrderVoucherCode @></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Discount :>:</th>
+                                <td><@ OrderVoucherDiscount @> <@ SettingCurrency @> <span class="label label-warning"><@ OrderVoucherDiscountType @></span></td>
+                            </tr>
+                            <% endif %>
+                            <tr>
+                                <th nowrap="nowrap"><: Amount Due :>:</th>
+                                <td><@ OrderInfoAmountDue @> <@ SettingCurrency @></td>
+                            </tr>
+                            
+                            <tr>
+                                <th nowrap="nowrap"><: Status :>:</th>
+                                <td><@ OrderInfoStatus @></td>
+                            </tr>                            
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="ViewOrders" value="1">&laquo; Back</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">          
+                        <@ CSFR_Tag @>
+                    </form>	
+    </div>    
+    <% endif %>    
+    <% if isEditOrder %>
+	<div class="panel panel-info">
+        	<div class="panel-heading"><: Edit Order :></div>                        
+                     <form action="./?module=xbilling&action=UpdateOrder" method="post" name="frmEditOrder" id="frmEditOrder">
+                        <table class="table table-stripped" id="view_order">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Order  :>#:</th>
+                                <td><@ OrderInfoReference @></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Date :>:</th>
+                                <td><@ OrderInfoDate @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: User :>:</th>
+                                <td><@ OrderInfoUser @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: Description :>:</th>
+                                <td><@ OrderInfoDescription @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap"><: Total Amount :>:</th>
+                                <td><@ OrderInfoAmount @> <@ SettingCurrency @></td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Status :>:</th>
+                                <td><@ OrderInfoStatus @></td>
+                            </tr>                            
+                            <tr>
+                                <th nowrap="nowrap">&nbsp</th>
+                                <td><input type="checkbox" name="completed_yn" id="completed_yn" value="1" checked="checked" /> Mark Order as Completed</td>
+                            </tr>                            
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="UpdateOrder" value="1">Update Order</button>&nbsp;<button class="btn btn-warning cancel-action" type="button" data-rel="invoices_orders" name="ViewOrders" value="CancelUpdateOrder">Cancel</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <input type="hidden" id="order_id" name="order_id" value="<@ CurrentOrderID @>">
+                        <@ CSFR_Tag @>
+                    </form>
+    </div>    
+    <% endif %>    
+    
+	<div class="panel panel-default">
+        	<div class="panel-heading"><: Orders :></div>                
+        <% if OrdersInvoices %>
+        <form action="./?module=xbilling" method="post" id="frmOrders">
+            <table class="table table-stripped table-bordered">
+                <tr>
+                    <th><: Invoice # :></th>
+                    <th><: Username :></th>
+                    <th><: Date :></th>
+                    <th><: Total Amount :></th>
+                    <th><: Description :></th>
+                    <th><: Status :></th>
+                    <th class="col-sm-3"></th>
+                </tr>
+                <% loop OrdersInvoices %>
+                <tr>
+                    <td><& icon &><& order_no &></td>
+                    <td><& order_user &></td>
+                    <td><& order_date &></td>
+                    <td><& order_amount &> <@ SettingCurrency @></td>
+                    <td><& order_desc &></td>
+                    <td><& order_status &></td>
+                    <td><& button &></td>
+                </tr>			
+                <% endloop %>
+            </table>
+            <input type="hidden" id="item_id" name="order_id" value="0">
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+        <% else %>
+        <: You currently do not have any orders to display at this time. :>
+        <div class="clearfix">&nbsp;</div>
+        <% endif %>
+    </div>
+<% endif %>
+</div>
+
+<% if ViewNewAccount %>
+   <div class="panel panel-info">
+        <div class="panel-heading"><: Create New Account :></div>
+	<div id="new_account_msg" class="alert alert-danger" style="display: none;"></div>         
+        <form action="./?module=xbilling&action=CreateAccount" method="post" id="frm_create_new_account">
+            <h4>
+            	<span class="label label-default"><: User Information :></span>
+            </h4>
+            <table class="table table-stripped">
+                <tr>
+                    <th class="col-sm-3"><: Username :>:</th>
+                    <td><input name="username" type="text" maxlength="10" id="txt_username" /></td>
+                </tr>
+                <tr>
+                    <th><: Password :>:</th>
+                    <td><input name="password" type="text" id="txt_password" size="20" /> <a href="#" class="link-password btn btn-mini btn-info" id="generate"><: Generate Password :></a></td>
+                </tr>
+                <tr>
+                    <th><: Full name :>:</th>
+                    <td><input type="text" name="fullname" id="txt_fullname" value="" /></td>
+                </tr>
+                <tr>
+                    <th><: Email Address :>:</th>
+                    <td><input type="text" name="email_address" id="txt_email" value="" /></td>
+                </tr>
+                <tr>
+                    <th valign="top"><: Postal Address :>:</th>
+                    <td><textarea name="address" id="txt_address" cols="35" rows="5"></textarea></td>
+                </tr>
+                <tr>
+                    <th><: Postal Code :>:</th>
+                    <td><input name="postcode" type="text" id="txt_postcode" size="20" maxlength="10" value="" /></td>
+                </tr>
+                <tr>
+                    <th><: Phone Number :>:</th>
+                    <td><input name="phone" type="text" id="txt_phone" size="20" maxlength="50" value="" /></td>
+                </tr>
+            </table>
+
+            <h4>
+            	<span class="label label-default"><: Hosting Information :></span>
+            </h4>            
+             <table class="table table-stripped">
+                <tr>
+                    <th class="col-sm-3"><: Package :>:</th>
+                    <td>
+                        <select name="package_id" id="slt_packages" onchange="_pkg_periods();">
+                            <% loop ServicePackages %>
+                            <option value="<& id &>"><& name &></option>
+                            <% endloop %>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><: Service Period :>:</th>
+                    <td>
+                        <select name="period_id" id="slt_periods"></select>
+                    </td>
+                </tr>                
+                <tr>
+                   <th nowrap="nowrap"><: Domain name :>:</th>
+                    <td><input name="domain" type="text" id="txt_domain" size="30" /></td>
+                </tr>
+                <!-- <tr>
+                   <th nowrap="nowrap"><: DNS Zones :>:</th>
+                   <td><input name="dns_yn" type="checkbox" id="chk_dns" value="1" checked="checked" /> Create DNS Zones</td>
+                </tr> -->
+                <tr>
+                  <th nowrap="nowrap"><: Home directory :>:</th>
+                  <td><input name="autohome" type="radio" id="chk_autohome" value="1" onclick="_toggle_domain_home(1);" checked="checked" />&nbsp;<: Create a new home directory :></td>
+                </tr>
+                <tr>
+                  <th>&nbsp;</th>
+                  <td><input name="autohome" type="radio" id="chk_autohome" value="2" onclick="_toggle_domain_home(2);" />&nbsp;<: Use existing home directory :></td>
+                </tr>
+                <tr id="domain_home" style="display: none;">
+                  <th>&nbsp;</th>
+                  <td>
+                     <select name="destination" id="slt_destination">
+                        <option value="">/ (root)</option>
+                         <% loop DomainDirsList %>
+                          <option value="<& domains &>">/<& domains &></option>
+                          <% endloop %>
+                     </select>
+                   </td>
+                </tr>
+                <tr>
+                  <th>
+		    <h4>
+		    	<span class="label label-default"><: Order Information :></span>
+		    </h4>                    
+                  </th>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <th><: Mark Order as :>:</th>
+                  <td>
+                     <select name="order_status" id="order_status">
+                        <option value="0">Pending</option>
+                        <option value="1">Completed</option>
+                     </select>
+                   </td>
+                </tr>
+                <tr>
+                   <th nowrap="nowrap"><: Send Email :>:</th>
+                   <td><input name="email_yn" type="checkbox" id="email_yn" value="1" checked="checked" /></td>
+                </tr>                 
+                <tr>
+                   <th></th>
+                   <td>
+                   	<button class="btn btn-primary" type="submit" id="button" name="CreateUser" value="1">Create</button>
+                   	<button class="btn btn-warning cancel-action" data-rel="website_settings" type="button" id="button" name="CancelCreateUser">Cancel</button>
+                   </td>
+                 </tr>
+              </table> 
+              <input type="hidden" id="view" name="view" value="<@ View @>">    
+            <@ CSFR_Tag @>
+        </form>
+   </div>
+<% endif %>
+
+<div class="tab-pane<% if ViewVouchers %> active<% endif %>" id="vouchers">
+<% if ViewVouchers %>
+    
+
+     <% if isEditVoucher %>
+	  <div class="clearfix">&nbsp;</div>
+            <div class="panel panel-info">
+		        <div class="panel-heading"><: Edit Voucher :></div>
+                     <form action="./?module=xbilling&action=UpdateVoucher" method="post" name="frmUpdateVoucher">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Code :>:</th>
+                                <td class="vertical-baseline">
+                                	<@ CurrentVoucherCode @>
+                                 </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Discount :>:</th>
+                                <td class="vertical-baseline"><input name="discount" type="text" id="voucher_discount" size="2" value="<@ CurrentVoucherDiscount @>" /> %</td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Discount Type :>:</th>
+                                <td class="vertical-baseline">
+                                     <select name="type" id="voucher_type">
+                                      <% loop EditDiscountType %>
+                                         <option value="<& id &>"<& selected_yn &>><& label &></option>
+                                      <% endloop %>
+                                     </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Active :>:</th>
+                                <td class="vertical-baseline">
+                                        <select name="active_yn" id="voucher_status">
+                                      <% loop EditDiscountStatus %>
+                                         <option value="<& id &>"<& selected_yn &>><& label &></option>
+                                      <% endloop %>
+                                        </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Usage :>:</th>
+                                <td class="vertical-baseline">
+                                        <select name="usage" id="slt_voucher_usage">
+                                      <% loop EditDiscountUsageType %>
+                                         <option value="<& id &>"<& selected_yn &>><& label &></option>
+                                      <% endloop %>
+                                        </select>
+                                </td>
+                            </tr>
+                             <tr>
+                                <th></th>
+                                <td>
+                                <button class="btn btn-primary" type="submit" id="btn_x_update" name="UpdateVoucher" value="1">Update</button> &nbsp;
+                                <button class="btn btn-warning cancel-action" data-rel="vouchers" type="button" id="btn_x_update" name="UpdatePeriod" value="1">Cancel</button>
+                                </td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="voucher_id" name="voucher_id" value="<@ CurrentVoucherID @>">
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+                </div>	
+
+    <% endif %>
+
+   <div class="zgrid_wrapper">
+        <div class="clearfix">&nbsp;</div>
+        <% if Vouchers %>
+        <div class="panel panel-default">
+        <div class="panel-heading"><: Vouchers :></div>
+        <form action="./?module=xbilling" method="post" id="frmVouchers">
+            <table class="table table-stripped table-bordered">
+                <tr>
+                    <th><: Code :></th>
+                    <th><: Discount :></th>
+                    <th><: Type :></th>
+                    <th><: Usages :></th>
+                    <th><: Active :></th>
+                    <th></th>
+                </tr>
+                <% loop Vouchers %>
+                <tr>
+                    <td><& code &></td>
+                    <td><& discount &>% <span class="label label-info"><& discount_type_text &></span></td>
+                    <td><& usage_type_text &></td>
+                    <td><& total_usages &></td>
+                    <td><& active_text &></td>
+                    <td><button class="btn btn-info btn-mini" type="submit" id="button" name="inEdit_<& id &>" id="inEdit_<& id &>" value="inEdit_<& id &>" onclick="_change_action('frmVouchers','EditVoucher', '<& id &>');"><: Edit :></button>&nbsp;&nbsp;<button class="btn btn-danger btn-mini delete-voucher" type="button" data-id="<& id &>" value="inDelete_<& id &>"><: Delete :></button>
+                    </td>
+                </tr>			
+                <% endloop %>
+            </table>
+            <input type="hidden" id="item_id" name="voucher_id" value="0">
+            <input type="hidden" id="view" name="view" value="<@ View @>">
+            <@ CSFR_Tag @>
+        </form>
+        </div>
+        <% else %>
+        <: You currently do not have any discount vouchers at this moment. Create a discount voucher using the form below. :>
+        <div class="clearfix">&nbsp;</div>
+        <% endif %>
+    </div>
+    <% if isAddVoucher %>
+    <div class="zform_wrapper">                       
+                    <div class="panel panel-info">
+		        <div class="panel-heading"><: Create a new Voucher :></div>
+                     <form action="./?module=xbilling&action=CreateVoucher" method="post" name="frmCreateVoucher">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th nowrap="nowrap" class="col-sm-3"><: Code :>:</th>
+                                <td class="vertical-baseline">
+                                	<input name="code" type="text" id="txt_voucher_code" size="12" style="text-transform: uppercase;" />  <a href="#" class="link-voucher btn btn-mini btn-info" id="generate"><: Generate :></a>
+                                 </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Discount :>:</th>
+                                <td class="vertical-baseline"><input name="discount" type="text" id="voucher_discount" size="2" value="5" /> %</td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Discount Type :>:</th>
+                                <td class="vertical-baseline">
+                                        <select name="type" id="voucher_type">
+                                            <option value="1">Once Off</option>
+                                            <option value="2">Recurring</option>
+                                        </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Active :>:</th>
+                                <td class="vertical-baseline">
+                                        <select name="active_yn" id="voucher_status">
+                                            <option value="1">Yes</option>
+                                            <option value="0">No</option>
+                                        </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th nowrap="nowrap"><: Usage :>:</th>
+                                <td class="vertical-baseline">
+                                        <select name="usage" id="slt_voucher_usage">
+                                            <option value="1">Once</option>
+                                            <option value="2">Multiple</option>
+                                        </select>
+                                </td>
+                            </tr>
+                             <tr>
+                                <th></th>
+                                <td><button class="btn btn-primary" type="submit" id="button" name="CreateVoucher" value="1">Create</button></td>
+                            </tr>
+                        </table>
+                        <input type="hidden" id="view" name="view" value="<@ View @>">
+                        <@ CSFR_Tag @>
+                    </form>
+                    </div>	
+    </div>
+    <% endif %>
+<% endif %>
+</div>
+
+
+<% if ViewHelp %>
+ <div class="zform_wrapper">
+   <!-- This section of the module tries to explain a basic 'how to' setup of the module. -->
+   <h3 class="legendhead"><: Email Settings :></h3>
+   
+   Please see below for a sample of what your outgoing email / paypal settings should look like, feel free to extend as you see fit.
+   <br /><br />
+   <div align="left">
+       <strong>Order Email</strong>
+       <br />
+       <!-- This is the format of an email a user receives when they register for an account and an invoice is created.
+       <br /><br /> -->
+       <textarea cols="45" rows="8" disabled="disabled">Hi {{fullname}},
+Thank you for your interest in {{company_name}}.
+
+Your account has been created and is pending.
+
+Your invoice {{invoice_reference}}, has been generated and pending payment.
+
+Please follow the link below to complete payment for this invoice.
+
+{{invoice_link}}
+
+Please note that, if invoice is unpaid for {{invoice_unpaid_days}} days, your account will be deleted automatically.
+
+Kind Regards,
+{{company_name}} Support
+     </textarea>
+   </div>
+    <br />
+   <div align="left">
+       <strong>Welcome Email</strong>
+       <br />
+       <!-- This is the format of an email a user receives after paying an invoice on a new account creation, it also sends them the login credentials as well.
+       <br /><br /> -->
+       <textarea cols="45" rows="8" disabled="disabled">Hi {{fullname}},
+Your hosting package registration has now been completed.
+
+Control Panel Information:
+URL: {{panel_url}}
+Username: {{username}}
+Password: {{password}}
+
+
+Kind Regards,
+{{company_name}} Support
+     </textarea>
+   </div>
+    <br />
+   <div align="left">
+       <strong>Invoice Reminder Email</strong>
+       <br />
+       <!-- This is the format of an email a user receives after paying an invoice on a new account creation, it also sends them the login credentials as well.
+       <br /><br /> -->
+       <textarea cols="45" rows="8" disabled="disabled">Hi {{fullname}},
+This is a reminder that your invoice on {{company_name}} is pending and needs to be completed as soon as possible.
+
+Please note that, if invoice is unpaid by {{invoice_due_date}}, your account will be deleted.
+
+Please follow the link below to complete payment for this invoice.
+
+{{invoice_link}}
+
+Kind Regards,
+{{company_name}} Billing</textarea>
+   </div>
+    <br />
+   <div align="left">
+       <strong>Renewal Reminder Email</strong>
+       <br />
+       <!-- This is the format of an email a user receives after paying an invoice on a new account creation, it also sends them the login credentials as well.
+       <br /><br /> -->
+       <textarea cols="45" rows="8" disabled="disabled">Hi {{fullname}},
+This is a reminder that your domain, {{domain_name}} will expire on {{expiry_date}}.
+
+If you wish to renew this domain please do so before on or before {{expiry_date}}.
+
+Please note that, un-renewed domains will be deleted {{delete_expired_days}} days after expiration.
+
+Kind Regards,
+{{company_name}} Support</textarea>
+   </div>
+    <br />
+   <div align="left">
+       <strong>Renewal Email</strong>
+       <br />
+       <!-- This is the format of an email a user receives after paying an invoice on a new account creation, it also sends them the login credentials as well.
+       <br /><br /> -->
+       <textarea cols="45" rows="8" disabled="disabled">Hi {{fullname}},
+This is to notify you that your domain {{domain_name}} has been renewed for another {{renewal_period}}.
+
+
+Kind Regards,
+{{company_name}} Billing</textarea>
+   </div>
+    <br /><br />
+   <div align="left">
+       <strong>PayPal HTML Form Template Sample</strong>
+       <br />
+       Please note that the {{business_email}} and {{notify_url}} comes from the <br />payment option fields settings above, every other fields in here gets replaced with their respective values.<br />
+       <br />So, the more fields you add for a payment option (in this case paypal), the more fields that has to be in the form.
+       <br /><br />
+       <textarea cols="45" rows="8" disabled="disabled"><form action=&quot;https://www.paypal.com/cgi-bin/webscr&quot; method=&quot;post&quot;>
+<input type=&quot;hidden&quot; name=&quot;cmd&quot; value=&quot;_xclick&quot;>
+<input type=&quot;hidden&quot; name=&quot;business&quot; value=&quot;{{business_email}}&quot;>
+<input type=&quot;hidden&quot; id=&quot;payment_method_id&quot; name=&quot;custom&quot; value=&quot;&quot;>
+<input type=&quot;hidden&quot; name=&quot;lc&quot; value=&quot;{{country_code}}&quot;>
+<input type=&quot;hidden&quot; name=&quot;item_name&quot; value=&quot;{{invoice_desc}}&quot;>
+<input type=&quot;hidden&quot; name=&quot;amount&quot; value=&quot;{{invoice_amount}}&quot;>
+<input type=&quot;hidden&quot; name=&quot;invoice&quot; value=&quot;{{invoice_id}}&quot;>
+<input type=&quot;hidden&quot; name=&quot;currency_code&quot; value=&quot;{{currency}}&quot;>
+<input type=&quot;hidden&quot; name=&quot;notify_url&quot; value=&quot;{{notify_url}}&quot;>
+<input type=&quot;hidden&quot; name=&quot;button_subtype&quot; value=&quot;services&quot;>
+<input type=&quot;hidden&quot; name=&quot;bn&quot; value=&quot;PP-BuyNowBF:btn_paynowCC_LG.gif:NonHosted&quot;>
+<input type=&quot;image&quot; src=&quot;https://www.paypal.com/en_US/i/btn/btn_paynowCC_LG.gif&quot; border=&quot;0&quot; name=&quot;submit&quot; alt=&quot;PayPal - The safer, easier way to pay online!&quot;>
+<img alt=&quot;&quot; border=&quot;0&quot; src=&quot;https://www.paypal.com/en_US/i/scr/pixel.gif&quot; width=&quot;1&quot; height=&quot;1&quot;>
+</form></textarea>
+</div>
+
+ </div>
+<% endif %>
+
+<% else %>
+    <p>&nbsp;</p>
+    <div align="center" style="color: #f00; font-size: 18px;">
+        <: This module is not installed! :>
+    </div>
+    <p>&nbsp;</p>
+<% endif %>
+
+</div>
+
+<div class="modal fade" id="xbillingModal" tabindex="-1" role="dialog" aria-labelledby="xbillingModalTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="xbillingModalTitle">&nbsp;</h4>
+      </div>
+      <div class="modal-body" id="xbillingModalBody">
+        
+      </div>
+      <div class="modal-footer">
+        <button id="xbilling_btn_close_modal" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="xbilling_btn_save_modal" type="button" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script language="javascript" type="text/javascript">
+ <!--//--><![CDATA[//>
+ <!--
+    var form_msgs = [];
+ <% if ViewPaymentOptions %>
+    var total_fields = <@ PaymentOptionFieldCount @>;
+ <% endif %>
+ var _module_dir = '<@ ModuleDir @>';
+ //var _min_pass_length = <@ MinPassLength @>;
+ $(function(){
+    <% if ViewPaymentMethods %>  
+    _reload_option_fields();
+        <% if isAddMethod %>
+	    $('#frm_create_payment_method').validate();    
+	    payment_methods_validation_rules();     
+        <% endif %>
+        <% if isEditMethod %>
+     $('#payment_option_id').attr('disabled','disabled');
+    $('#frm_create_payment_method').validate();    
+    payment_methods_validation_rules();     
+        <% endif %>
+    <% endif %>
+    <% if ViewSettings %>
+    _toggle_recaptcha();
+    <% endif %>
+    <% if ViewNewAccount %>    	
+        $('.link-password').click(function(e){
+            linkId = $(this).attr('id');
+            if (linkId == 'generate'){
+                password = $.password(<@ MinPassLength @>,false);
+                $('#txt_password').val(password);
+            }
+            e.preventDefault();
+        });
+        
+        _pkg_periods();
+        
+	$("#frm_create_new_account").validate({
+	  ignore: ".ignore"
+	});
+	$("#frm_create_new_account").removeAttr("novalidate");        
+          	    	
+    <% endif %>
+    
+    <% if isAddPaymentOption %> 
+    $('#frm_create_payment_option').validate();    
+    payment_options_validation_rules();
+    <% endif %>
+
+    <% if ViewEmailSettings %>
+    	wysiwyg_format();    	
+    <% endif %>
+    
+    <% if ViewVouchers %>    	
+        $('.link-voucher').click(function(e){
+            linkId = $(this).attr('id');
+            if (linkId == 'generate'){
+                password = $.password(7,false);
+                $('#txt_voucher_code').val(password);
+            }
+            e.preventDefault();
+        });
+        
+        _pkg_periods();
+        
+	$("#frm_create_new_account").validate({
+	  ignore: ".ignore"
+	});
+	$("#frm_create_new_account").removeAttr("novalidate");        
+          	    	
+    <% endif %>
+    
+ });
+ 
+ 	form_msgs['xbilling_plan_delete_dialog_title'] = "<: Delete Service Plan :>?";
+	form_msgs['xbilling_item_delete_confirm_msg'] = "<: Are you sure to delete selected item :>?";
+ 	form_msgs['xbilling_payment_option_delete_dialog_title'] = "<: Delete Payment Option :>?";
+ 	form_msgs['xbilling_voucher_delete_dialog_title'] = "<: Delete Discount Voucher :>?";
+	
+	form_msgs['xbilling_invoice_resend_dialog_title'] = "<: Resend Invoice :>?";
+	form_msgs['xbilling_invoice_resend_confirm_msg'] = "<: Are you sure to resend selected invoice :>?";
+
+	form_msgs['xbilling_empty_option_title'] = "<: Please enter a valid Payment Option Title :>";
+	form_msgs['xbilling_empty_option_html'] = "<: Form HTML cannot be empty :>";
+
+	form_msgs['xbilling_ok_btn_label'] = "<: Yes :>";
+	form_msgs['xbilling_cancel_btn_label'] = "<: Cancel :>";
+
+</script>

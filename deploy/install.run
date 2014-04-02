@@ -1,0 +1,288 @@
+<?php
+/**
+ *
+ * Installer for xBilling Module for ZPanel 10.0.2
+ * Version : 100
+ * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
+ * Email : goremmy@gmail.com
+ */
+
+require_once('cnf/db.php');
+require_once('dryden/db/driver.class.php');
+require_once('dryden/debug/logger.class.php');
+require_once('dryden/runtime/dataobject.class.php');
+require_once('dryden/sys/versions.class.php');
+require_once('dryden/ctrl/options.class.php');
+require_once('dryden/ctrl/auth.class.php');
+require_once('dryden/ctrl/users.class.php');
+require_once('dryden/fs/director.class.php');
+require_once('inc/dbc.inc.php');
+
+
+//install
+installModule();
+
+function installModule(){
+    global $zdbh;
+        
+    //create database
+    $numrows = $zdbh->prepare("CREATE DATABASE `zpanel_xbilling` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `zpanel_xbilling`;");
+    $numrows->execute();
+
+   //create tables
+    $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_invoices` (
+                                      `invoice_id` int(25) NOT NULL AUTO_INCREMENT,
+                                      `ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      `invoice_voucher_id` int(25) NOT NULL DEFAULT '0',
+                                      `invoice_dated` datetime NOT NULL,
+                                      `invoice_status` tinyint(1) NOT NULL DEFAULT '0',
+                                      `reminder_sent_yn` tinyint(1) NOT NULL DEFAULT '0',
+                                      `invoice_total_amount` double NOT NULL DEFAULT '0',
+                                      `payment_option_id` int(5) NOT NULL DEFAULT '0',
+                                      `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      `invoice_reference` varchar(225) NOT NULL,
+                                      `transaction_id` varchar(225) NOT NULL DEFAULT '0',
+                                      `invoice_deleted_ts` int(30) NULL,
+                                      PRIMARY KEY (`invoice_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+     $numrows->execute();
+
+     $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_invoices_orders` (
+                                      `invoice_id` int(25) NOT NULL,
+                                      `order_id` int(25) NOT NULL,
+                                      KEY `invoice_id` (`invoice_id`,`order_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+     $numrows->execute();
+
+     $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_vouchers` (
+                                      `voucher_id` int(25) NOT NULL AUTO_INCREMENT,                                      
+                                      `reseller_ac_id_fk` int(25) NOT NULL,
+                                      `active_yn` tinyint(1) NOT NULL,
+                                      `voucher_code` varchar(225) NOT NULL DEFAULT '',
+                                      `usage_type` tinyint(1) NOT NULL DEFAULT '1',                                      
+                                      `discount_type` tinyint(1) NOT NULL DEFAULT '1',                                      
+                                      `discount` DOUBLE NOT NULL DEFAULT '0',
+                                      `voucher_created_ts` int(30) NULL,
+                                      `voucher_deleted_ts` int(30) NULL,
+                                      
+                                      PRIMARY KEY (`voucher_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+     $numrows->execute();
+
+     $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_orders` (
+                                      `order_id` int(25) NOT NULL AUTO_INCREMENT,
+                                      `ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      `order_status` tinyint(1) NOT NULL DEFAULT '0',
+                                      `order_dated` datetime NOT NULL,
+                                      `order_amount` double NOT NULL DEFAULT '0',
+                                      `order_complete_dated` datetime NOT NULL,
+                                      `order_desc` varchar(255) NOT NULL DEFAULT '',
+                                      `package_period_id_fk` int(15) NOT NULL DEFAULT '0',
+                                      `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      `order_vh_fk` int(25) NOT NULL DEFAULT '0',
+                                      `order_type_id` tinyint(1) NOT NULL DEFAULT '1',
+                                      `order_deleted_ts` int(30) NULL,
+                                      PRIMARY KEY (`order_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;");
+     $numrows->execute();
+
+     $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_packages` (
+                                      `zpx_package_id` int(11) NOT NULL DEFAULT '0' COMMENT 'pk_id_pk from zpanel_core.x_packages',
+                                      `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      `package_desc` varchar(225) NOT NULL DEFAULT '',
+                                      `free_package_yn` tinyint(1) NOT NULL DEFAULT '0',
+                                      `enabled_yn` tinyint(1) NOT NULL DEFAULT '1',
+                                      PRIMARY KEY (`zpx_package_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_packages_periods` (
+                                      `package_period_id` int(25) NOT NULL AUTO_INCREMENT COMMENT 'to be used in x_orders',
+                                      `zpx_package_id` int(11) NOT NULL DEFAULT '0',
+                                      `period_id` int(11) NOT NULL DEFAULT '0',
+                                      `package_amount` double NOT NULL DEFAULT '0',
+                                      PRIMARY KEY (`package_period_id`),
+                                      KEY `zpx_package_id` (`zpx_package_id`,`period_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `x_payment_methods` (
+                                  `method_id` int(5) NOT NULL AUTO_INCREMENT,
+                                  `payment_option_id` int(25) NOT NULL DEFAULT '0',
+                                  `enabled_yn` tinyint(1) NOT NULL DEFAULT '1',
+                                  `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                  `method_deleted_ts` int(30) NULL,
+                                  PRIMARY KEY (`method_id`)
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_periods` (
+                                      `period_id` int(11) NOT NULL AUTO_INCREMENT,
+                                      `period_duration` tinyint(2) NOT NULL DEFAULT '1' COMMENT 'months',
+                                      `default_amount` double NOT NULL DEFAULT '0',
+                                      `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      `period_deleted_ts` int(30) NULL,
+                                      PRIMARY KEY (`period_id`)
+                                    ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_settings` (
+                                      `setting_id` int(11) NOT NULL AUTO_INCREMENT,
+                                      `setting_name` varchar(125) NOT NULL,
+                                      `setting_value` text NOT NULL,
+                                      `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
+                                      PRIMARY KEY (`setting_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_payment_options` (
+                                     `payment_option_id` int(11) NOT NULL AUTO_INCREMENT,
+                                     `payment_option_name` varchar(255) NOT NULL DEFAULT '',
+                                     `payment_option_form_html` text NOT NULL DEFAULT '',
+                                     `reseller_ac_id_fk` int(25) NOT NULL,
+                                     `enabled_yn` tinyint(1) NOT NULL DEFAULT '1',
+                                     `option_deleted_ts` int(30) NULL,
+                                     PRIMARY KEY (`payment_option_id`)
+                                  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_payment_option_fields` (
+                                      `payment_option_id` int(11) NOT NULL,
+                                      `field_name` varchar(250) NOT NULL,
+                                      `field_label` varchar(250) NOT NULL,
+                                      KEY `payment_option_id` (`payment_option_id`,`field_name`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `x_payment_option_values` (
+                                  `payment_option_value_id` int(25) NOT NULL AUTO_INCREMENT,
+                                  `payment_option_id` int(25) NOT NULL,
+                                  `reseller_ac_id_fk` int(25) NOT NULL,
+                                  `field_name` varchar(255) NOT NULL,
+                                  `field_value` text NOT NULL,
+                                  PRIMARY KEY (`payment_option_value_id`)
+                                ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+      $numrows->execute();
+
+      //alter zpanel_core tables
+      $numrows = $zdbh->prepare("ALTER TABLE  zpanel_core.`x_vhosts` ADD 
+                                    `vh_expiry_ts` INT(30) NOT NULL DEFAULT '0' AFTER  `vh_created_ts`,
+                                    ADD `vh_invoice_created_yn` tinyint(1) NOT NULL DEFAULT '0', 
+                                    ADD `expiration_reminder_sent_yn` tinyint(1) NOT NULL DEFAULT '0'
+                                    AFTER  `vh_expiry_ts`");
+      $numrows->execute();
+      
+      
+      //Insert Default Records
+      
+      //settings
+      $numrows = $zdbh->prepare("INSERT IGNORE INTO `x_settings` (`setting_name`, `setting_value`, `reseller_ac_id_fk`) VALUES
+                                    ('company_name', 'XYZ Hosting Company', -1),
+                                    ('email_address', 'dev@xyz.tld', -1),
+                                    ('company_logo_path', 'http://billing.xyz.tld/images/xyz_logo.png', -1),
+                                    ('website_billing_url', 'http://billing.xyz.tld', -1),
+                                    ('url_protocol', 'http://', -1),
+                                    ('country_code', 'US', -1),
+                                    ('currency', 'USD', -1),
+                                    ('billing_enabled_yn', '1', -1),
+                                    ('invoice_reminder_days', '2', -1),
+                                    ('pending_invoice_delete_days', '5', -1),
+                                    ('renewal_reminder_days', '7', -1),
+                                    ('recaptcha_disabled_yn', '0', -1),
+                                    ('recaptcha_public_key', '', -1),
+                                    ('recaptcha_private_key', '', -1),
+                                    ('logs_enabled_yn', '1', -1),
+                                    ('email_format', '1', -1),
+                                    ('order_message', 'Hi {{fullname}},<br /><br />Thank you for your interest in {{company_name}}.<br /><br />Your account has been created and is pending.<br /><br />Your invoice {{invoice_reference}}, has been generated and pending payment.\r\n\r\nPlease follow the link below to complete payment for this invoice.<br /><br />{{invoice_link}}<br /><br />Please note that, if invoice is unpaid for {{invoice_unpaid_days}} days, your account will be deleted automatically.<br /><br />Kind Regards,\r\n{{company_name}} Support', -1),
+                                    ('welcome_message', 'Hi {{fullname}},<br /><br />Your hosting package registration has now been completed.<br /><br />Control Panel Information:<br />URL: {{panel_url}}<br />Username: {{username}}<br />Password: {{password}}<br /><br /><br />Kind Regards,<br />{{company_name}} Support', -1),
+                                    ('invoice_reminder_message', 'Hi {{fullname}},<br /><br />This is a reminder that your invoice on {{company_name}} is pending and needs to be completed as soon as possible.<br /><br />Please note that, if invoice is unpaid by {{invoice_due_date}}, your account will be deleted.<br /><br />Please follow the link below to complete payment for this invoice.<br /><br />{{invoice_link}}<br /><br />Kind Regards,<br />{{company_name}} Billing', -1),
+                                    ('renewal_reminder_message', 'Hi {{fullname}},<br /><br />This is a reminder that your domain, {{domain_name}} will expire on {{expiry_date}}.<br /><br />Your invoice has been generated, please navigate to the link below to view your invoice.<br /><br />{{invoice_link}}<br /><br />If you wish to renew this domain please do so before on or before {{expiry_date}}.<br /><br />Please note that, un-renewed domains will be deleted {{delete_expired_days}} days after expiration.<br /><br />Kind Regards,<br />{{company_name}} Support', -1),
+                                    ('renewal_message', 'Hi {{fullname}},<br /><br />This is to notify you that your domain {{domain_name}} has been renewed for another {{renewal_period}}.<br /><br />Kind Regards,<br />{{company_name}} Billing', -1);
+                                    ");
+      $numrows->execute();
+      
+
+      //payment options
+      
+      //PayPal
+      $numrows = $zdbh->prepare("INSERT IGNORE INTO `x_payment_options` (`payment_option_id`, `payment_option_name`, `payment_option_form_html`, `reseller_ac_id_fk`, `enabled_yn`, `option_deleted_ts`) VALUES
+                                    (1, 'Paypal', '<form action=\"https://www.paypal.com/cgi-bin/webscr\" method=\"post\">
+                                                    <input type=\"hidden\" name=\"cmd\" value=\"_xclick\">
+                                                    <input type=\"hidden\" name=\"business\" value=\"{{business_email}}\">
+                                                    <input type=\"hidden\" id=\"payment_method_id\" name=\"custom\" value=\"\">
+                                                    <input type=\"hidden\" name=\"lc\" value=\"{{country_code}}\">
+                                                    <input type=\"hidden\" name=\"item_name\" value=\"{{invoice_desc}}\">
+                                                    <input type=\"hidden\" name=\"amount\" value=\"{{invoice_amount}}\">
+                                                    <input type=\"hidden\" name=\"invoice\" value=\"{{invoice_id}}\">
+                                                    <input type=\"hidden\" name=\"currency_code\" value=\"{{currency}}\">
+                                                    <input type=\"hidden\" name=\"discount_rate\" value=\"{{discount_rate}}\">
+                                                    <input type=\"hidden\" name=\"notify_url\" value=\"{{notify_url}}\">
+                                                    <input type=\"hidden\" name=\"button_subtype\" value=\"services\">
+                                                    <input type=\"hidden\" name=\"bn\" value=\"PP-BuyNowBF:btn_paynowCC_LG.gif:NonHosted\">
+                                                    <input type=\"image\" src=\"https://www.paypal.com/en_US/i/btn/btn_paynowCC_LG.gif\" 
+                                                        border=\"0\" name=\"submit\" alt=\"PayPal - The safer, easier way to pay online!\">
+                                                        <img alt=\"\" border=\"0\" src=\"https://www.paypal.com/en_US/i/scr/pixel.gif\" 
+                                                        width=\"1\" height=\"1\"></form>', 1, 1, NULL);");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("INSERT IGNORE INTO `x_payment_option_fields` (
+                                    `payment_option_id`, `field_name`, `field_label`) VALUES
+                                    (1, 'business_email', 'Business Email'),
+                                    (1, 'notify_url', 'IPN URL');
+                                    ");
+      $numrows->execute();
+      
+      //PayGate and MyGate
+      /*$numrows = $zdbh->prepare("INSERT INTO `x_payment_options` (`payment_option_id`, `payment_option_name`, `payment_option_form_html`, `reseller_ac_id_fk`, `enabled_yn`, `option_deleted_ts`
+                                    ) VALUES(2, 'PayGate.co.za', '<form name=\"frm_pay\" action=\"https://www.paygate.co.za/PayWebv2/process.trans\" method=\"post\">
+                                                                    <input type=\"hidden\" id=\"payment_method_id\" name=\"payment_method\" value=\"\">
+                                                                    <input name=\"PAYGATE_ID\" type=\"hidden\" value=\"{{paygate_id}}\" />
+                                                                    <input name=\"REFERENCE\" type=\"hidden\" value=\"{{invoice_id}}\" />
+                                                                    <input name=\"AMOUNT\" type=\"hidden\" value=\"{{invoice_amount}}\" />
+                                                                    <input name=\"CURRENCY\" type=\"hidden\" value=\"{{currency}}\" />
+                                                                    <input name=\"RETURN_URL\" type=\"hidden\" value=\"{{return_url}}\" />
+                                                                    <input name=\"TRANSACTION_DATE\" type=\"hidden\" value=\"{{payment_date}}\" />
+                                                                    <input name=\"EMAIL\" type=\"hidden\" value=\"{{client_email}}\" />
+                                                                    <input name=\"CHECKSUM\" type=\"hidden\" value=\"{{checksum}}\" />
+                                                                    <input type=\"submit\" value=\"Make Payment\" class=\"submit\" />
+                                                                    </form>', -1, 1, NULL),(3, 'MyGate.co.za', '<form name=\"frm_pay\" action=\"https://www.mygate.co.za/virtual/8x0x0/dsp_ecommercepaymentparent.cfm\" method=\"post\">
+                                                                    <input type=\"hidden\" name=\"Mode\" value="1" />
+                                                                    <input type=\"hidden\" name=\"txtMerchantID\" value=\"{{merchant_id}}\" />
+                                                                    <input type=\"hidden\" name=\"txtApplicationID\" value=\"{{application_id}}\" />
+                                                                    <input type=\"hidden\" name=\"txtMerchantReference\" value=\"{{invoice_id}}\" />
+                                                                    <input type=\"hidden\" name=\"txtPrice\" value=\"{{invoice_amount}}\" />
+                                                                    <input type=\"hidden\" name=\"txtCurrencyCode\" value=\"{{currency}}\" />
+                                                                    <input type=\"hidden\" name=\"txtRedirectSuccessfulURL\" value=\"{{success_url}}\">
+                                                                    <input type=\"hidden\" name=\"txtRedirectFailedURL\" value=\"{{failure_url}}\" />
+                                                                    <input type=\"hidden\" name=\"Variable1\" value=\"{{checksum}}\" />
+                                                                    <input type=\"submit\" value=\"Make Payment\" class=\"submit\" />
+                                                                    </form>', -1, 1, NULL);
+");
+      $numrows->execute();
+
+      $numrows = $zdbh->prepare("INSERT INTO `x_payment_methods` (`method_id`, `payment_option_id`, `enabled_yn`, `reseller_ac_id_fk`, `method_deleted_ts`
+                                    ) VALUES(3, 3, 1, -1, NULL),(4, 3, 1, -1, NULL),(5, 5, 1, -1, NULL);");
+      $numrows->execute();
+      */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+}
+
+?>

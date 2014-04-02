@@ -1,0 +1,93 @@
+<?php
+/**
+ *
+ * Upgrade script for xBilling Module for ZPanel 10.0.2
+ * Version : 100
+ * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
+ * Email : goremmy@gmail.com
+ */
+
+require_once('cnf/db.php');
+require_once('dryden/db/driver.class.php');
+require_once('dryden/debug/logger.class.php');
+require_once('dryden/runtime/dataobject.class.php');
+require_once('dryden/sys/versions.class.php');
+require_once('dryden/ctrl/options.class.php');
+require_once('dryden/ctrl/auth.class.php');
+require_once('dryden/ctrl/users.class.php');
+require_once('dryden/fs/director.class.php');
+require_once('inc/dbc.inc.php');
+
+
+//upgrade
+upgradeModule();
+
+
+// START - ZPX Module Updating added by TGates
+UpgradeModuleB('102', 'xbilling');
+
+function UpgradeModuleB($newversion, $module){
+    global $zdbh;
+    $sql = $zdbh->prepare("UPDATE x_modules SET mo_version_in = $newversion WHERE mo_folder_vc = '$module'");
+    $sql->execute();     
+}
+// END - ZPX Module Updating added by TGates
+
+function upgradeModule(){
+    global $zdbh;
+        
+    //update payment methods table
+    try {
+        $numrows = $zdbh->prepare("ALTER TABLE `zpanel_xbilling`.`x_payment_methods` 
+                                    ADD `method_deleted_ts` INT(30) NULL AFTER `reseller_ac_id_fk`;");
+        $numrows->execute();
+    } catch(Exception $e){
+        // column exists, continue
+    }
+    
+    //add free package column
+    try {
+        $numrows = $zdbh->prepare("ALTER TABLE `zpanel_xbilling`.`x_packages` ADD `free_package_yn` TINYINT(1) NOT NULL DEFAULT '0' AFTER `enabled_yn`;");
+        $numrows->execute();
+    } catch(Exception $e){
+        // column exists, continue
+    }
+    
+
+    //add invoice created column
+    try {
+        $numrows = $zdbh->prepare("ALTER TABLE  zpanel_core.`x_vhosts` ADD  `vh_invoice_created_yn` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `vh_expiry_ts`;");
+        $numrows->execute();
+    } catch(Exception $e){
+        // column exists, continue
+    }
+
+    //add invoice voucher id column to invoices
+    try {
+        $numrows = $zdbh->prepare("ALTER TABLE  zpanel_xbilling.`x_invoices` ADD  `invoice_voucher_id` INT( 25 ) NOT NULL DEFAULT  '0' AFTER  `invoice_reference`;");
+        $numrows->execute();
+    } catch(Exception $e){
+        // column exists, continue
+    }
+
+    //add vouchers table
+    try {
+        $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_vouchers` (
+                                      `voucher_id` int(25) NOT NULL AUTO_INCREMENT,                                      
+                                      `active_yn` tinyint(1) NOT NULL,
+                                      `usage_type` tinyint(1) NOT NULL DEFAULT '1',                                      
+                                      `discount_type` tinyint(1) NOT NULL DEFAULT '1',                                      
+                                      `discount` DOUBLE NOT NULL DEFAULT '0',
+                                      `voucher_code` varchar(225) NOT NULL DEFAULT '',
+                                      `voucher_created_ts` int(30) NULL,
+                                      `voucher_deleted_ts` int(30) NULL,
+                                      PRIMARY KEY (`voucher_id`)
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+        $numrows->execute();
+    } catch(Exception $e){
+        // table exists, continue
+    }
+  
+}
+
+?>

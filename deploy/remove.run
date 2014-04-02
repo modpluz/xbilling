@@ -1,0 +1,45 @@
+<?php
+/**
+ *
+ * Un-Installer for xBilling Module for ZPanel 10.0.2
+ * Version : 100
+ * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
+ * Email : goremmy@gmail.com
+ */
+
+require_once('cnf/db.php');
+require_once('dryden/db/driver.class.php');
+require_once('dryden/debug/logger.class.php');
+require_once('dryden/runtime/dataobject.class.php');
+require_once('dryden/sys/versions.class.php');
+require_once('dryden/ctrl/options.class.php');
+require_once('dryden/ctrl/auth.class.php');
+require_once('dryden/ctrl/users.class.php');
+require_once('dryden/fs/director.class.php');
+require_once('inc/dbc.inc.php');
+
+
+//install
+removeModule();
+
+function removeModule(){
+    global $zdbh;
+        
+    //delete database
+    $numrows = $zdbh->prepare("DROP DATABASE `zpanel_xbilling`;");
+    $numrows->execute();
+    
+    //alter zpanel_core tables
+    $numrows = $zdbh->prepare("ALTER TABLE  zpanel_core.`x_vhosts` DROP `vh_expiry_ts`");
+    $numrows->execute();
+
+    $numrows = $zdbh->prepare("ALTER TABLE  zpanel_core.`x_vhosts` DROP `vh_invoice_created_yn`");
+    $numrows->execute();
+
+
+    $numrows = $zdbh->prepare("ALTER TABLE  zpanel_core.`x_vhosts` DROP `expiration_reminder_sent_yn`");
+    $numrows->execute();
+    
+}
+
+?>

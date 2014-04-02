@@ -1,0 +1,45 @@
+.table, .table tbody tr { 
+     /* border-top: none; */
+ }
+ 
+ div.active {
+ 	color: inherit;
+ }
+ 
+ select {
+ 	width: auto;
+ }
+ 
+ .top-margin-ten {
+ 	margin-top: 10px;
+ }
+ 
+ .bottom-margin-twenty {
+ 	margin-bottom: 10px;
+ }
+ 
+ .section-tabs {
+ 	font-size: 12px;
+ }
+ 
+ .table input[type="text"] {
+ 	width: auto !important;
+ }
+ 
+ .vertical-baseline {
+ 	vertical-align: baseline !important;
+ }
+
+
+div.xbilling-updated {
+	color: #f00;
+	font-weight: bold;
+	font-size: 14px;
+	text-align: center;
+}
+
+div.xbilling-version {
+	float: right;
+	margin-top: -20px;
+	font-size: 14px;
+}
