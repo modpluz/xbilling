@@ -12,7 +12,7 @@ Billing module for the renowned zPanel(10.1.1)
 You should then find module in the Module Admin section of your control panel.
 
 Alternatively, you can install from the Module Admin by uploading the "zpp" file 
-which can be found at http://zpx.imerlabs.com/xbilling.xpp.
+which can be found at http://zpx.imerlabs.com/xbilling.zpp.
 
 #Updates
 	"zppy upgrade xbilling"
@@ -20,5 +20,5 @@ which can be found at http://zpx.imerlabs.com/xbilling.xpp.
 #Remove
 	"zppy remove xbilling"
 
-	
+
 
