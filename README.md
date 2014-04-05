@@ -2,6 +2,7 @@ xBilling v1.0.2
 Billing module for the renowned zPanel(10.1.1)
 
 [![Build Status](https://travis-ci.org/modpluz/xbilling.png?branch=master)](https://travis-ci.org/modpluz/xbilling)
+[![Coverage Status](https://coveralls.io/repos/modpluz/xbilling/badge.png)](https://coveralls.io/r/modpluz/xbilling)
 
 #Installation
 	Add repository from the command line
