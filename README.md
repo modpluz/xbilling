@@ -1,6 +1,8 @@
 xBilling v1.0.2
 Billing module for the renowned zPanel(10.1.1)
 
+[![Build Status](https://travis-ci.org/modpluz/xbilling.png?branch=master)](https://travis-ci.org/modpluz/xbilling)
+
 #Installation
 	Add repository from the command line
 		"zppy repo add http://zpx.imerlabs.com"
