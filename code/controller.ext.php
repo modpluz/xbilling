@@ -849,7 +849,7 @@ class module_controller {
                                'payment_success_url','payment_failure_url','payment_cancel_url',
                                'recaptcha_public_key','recaptcha_private_key',
                                'billing_enabled_yn','website_billing_url',
-                               'order_message', 'url_protocol','recaptcha_disabled_yn', 
+                               'url_protocol','recaptcha_disabled_yn', 
                                'logs_enabled_yn');
         if(is_array($formvars)){
             /*
@@ -1089,12 +1089,13 @@ class module_controller {
         $formvars = $controller->GetAllControllerRequests('FORM');
         //$allowed_ext = array('.gif','.png','.jpg','.jpeg');
         
-        $setting_keys = array('invoice_reminder_message','pending_invoice_delete_days',
-                               'renewal_reminder_message', 'welcome_message','renewal_message',
+        $setting_keys = array('invoice_reminder_message','renewal_reminder_message', 
+                                'welcome_message','renewal_message','order_message',
                                'email_format');
+
         if(is_array($formvars)){
             /*
-             * This will be implemented in a new version due to concerns of where to 
+             * This will be implemented in a future version due to concerns of where to 
              * save company logo - removed file upload field from module.zpm
             if(is_file($_FILES['company_logo']['tmp_name'])){
                 if ($_FILES['company_logo']['error'] > 0) {
