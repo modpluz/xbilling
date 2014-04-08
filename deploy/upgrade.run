@@ -24,7 +24,7 @@ upgradeModule();
 
 
 // START - ZPX Module Updating added by TGates
-UpgradeModuleB('102', 'xbilling');
+UpgradeModuleB('110', 'xbilling');
 
 function UpgradeModuleB($newversion, $module){
     global $zdbh;
