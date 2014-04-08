@@ -2,7 +2,7 @@
 /**
  *
  * xBilling Module for ZPanel 10.1.0
- * Version : 102
+ * Version : 1.1.0
  * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
  * Email : goremmy@gmail.com
  */
