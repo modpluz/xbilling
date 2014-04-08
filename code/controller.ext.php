@@ -5758,12 +5758,13 @@ class module_controller {
                 }
             }
             
-            //update user
+            //activate user and fetch user password
              if(isset($invoice_user['ac_id_fk'])){
-                $sql = $zdbh->prepare("UPDATE zpanel_core.x_accounts 
+                $new_pwd = self::ActivateUser($invoice_user['ac_id_fk']);
+                /*$sql = $zdbh->prepare("UPDATE zpanel_core.x_accounts 
                                           SET ac_enabled_in='1' WHERE ac_id_pk=:uid");
                 $sql->bindParam(':uid', $invoice_user['ac_id_fk']);
-                $sql->execute();
+                $sql->execute();*/
              }
             
             
@@ -5886,7 +5887,7 @@ class module_controller {
 		       //$emailbody = str_replace("{{invoice_reference}}", $order_info['invoice_reference'], $emailbody);
 		       //$emailbody = str_replace("{{invoice_unpaid_days}}", $inv_del_days, $emailbody);
 		       $emailbody = str_replace("{{username}}", $order['ac_user_vc'], $emailbody);
-		       $emailbody = str_replace("{{password}}", 'not shown', $emailbody);
+		       $emailbody = str_replace("{{password}}", $new_pwd, $emailbody);
 		       $emailbody = str_replace("{{panel_url}}", $panel_url, $emailbody);
 		       
 		       $subject = "Welcome to $company_name!";
