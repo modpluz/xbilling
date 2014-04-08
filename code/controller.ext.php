@@ -393,7 +393,7 @@ class module_controller {
     /* View States */
     
     /* Miscs */
-    static function getNumberCountLoop($start = 1, $max = 10){
+    static function getNumberCountLoop($start = 1, $max = 24){
 	global $controller;
 	
 	$formvars = $controller->GetAllControllerRequests('FORM');
