@@ -1,3 +1,11 @@
 language: php
 php:
   - 5.4
+
+env:
+  - DB=mysql
+
+# execute any number of scripts before the test run, custom env's are available as variables
+before_script:
+- if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS hello_world_test;" -uroot; fi
+
