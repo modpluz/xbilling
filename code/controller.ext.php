@@ -70,7 +70,8 @@ class module_controller {
             // $feed is not valid, grab the last backup
             $feed = simplexml_load_file($destfile);
         } else {
-            die('Unable to retrieve XML file');
+            //die('Unable to retrieve XML file');
+            echo('<div class="alert alert-danger">Unable to check for updates, your version may be outdated!.</div>');
         }
     }
 /*END - Check for updates added by TGates*/
@@ -1088,6 +1089,8 @@ class module_controller {
         $currentuser = ctrl_users::GetUserDetail();
         $formvars = $controller->GetAllControllerRequests('FORM');
         //$allowed_ext = array('.gif','.png','.jpg','.jpeg');
+
+        runtime_csfr::Protect();
         
         $setting_keys = array('invoice_reminder_message','renewal_reminder_message', 
                                 'welcome_message','renewal_message','order_message',
