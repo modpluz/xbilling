@@ -2776,8 +2776,16 @@ class module_controller {
     }
     
     static function sendMail($parms = array()){
-    	if(isset($parms['to']) && isset($parms['subject']) && isset($parms['message'])){
-    	 $currentuser = ctrl_users::GetUserDetail();
+
+        if(isset($parms['to']) && isset($parms['subject']) && isset($parms['message'])){
+            if(!isset($parms['reseller_id'])){
+                $parms['reseller_id'] = '';
+            }
+         //if(isset($parms['reseller_id'])){
+            $currentuser = ctrl_users::GetUserDetail($parms['reseller_id']);
+         //} else {
+            //$currentuser = ctrl_users::GetUserDetail();            
+         //}
     	 
     	 $email_format = self::appSetting($currentuser['userid'], 'email_format');
     	 
@@ -3888,7 +3896,8 @@ class module_controller {
              
              //fetch company name
              $company_name = self::appSetting($user_id,'company_name');
-             
+
+
              if($emailbody && $user_info['email']){
                  $emailbody = str_replace("{{fullname}}", $user_info['fullname'], $emailbody);
                  $emailbody = str_replace("{{company_name}}", $company_name, $emailbody);
@@ -3901,7 +3910,7 @@ class module_controller {
 
                  //$phpmailer = new sys_email();
                  $subject = "Welcome to $company_name!";
-                 self::sendMail(array('to' => $user_info['email'], 'subject' => $subject, 'message' => $emailbody));
+                 self::sendMail(array('to' => $user_info['email'], 'subject' => $subject, 'message' => $emailbody, 'reseller_id' => $user_id));
                  /*$phpmailer->Body = $emailbody;
                  $phpmailer->AddAddress($user_info['email']);
                  $phpmailer->SendEmail();*/
