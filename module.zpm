@@ -41,7 +41,7 @@
 <div class="tab-pane <% if ViewSettings %>active<% endif %>" id="website_settings">
 <% if ViewSettings %>
         <div align="right" class="top-margin-ten bottom-margin-twenty">
-            <strong>Important Downloads:</strong> <a href="./?module=xbilling&action=FetchConfig" target="_blank" class="btn btn-info btn-mini">Front-end Config Script</a>&nbsp;<a href="http://zpx.imerlabs.com/frontend_billing.zip" class="btn btn-default btn-mini">Front-end Billing Package</a>&nbsp;<a href="http://zpx.imerlabs.com/manuals/xbilling_manual.pdf" target="_blank" class="btn btn-warning btn-mini">Application Manual</a>&nbsp;
+            <strong>Important Downloads:</strong> <a href="./?module=xbilling&action=FetchConfig" target="_blank" class="btn btn-info btn-mini">Front-end Config Script</a>&nbsp;<a href="http://zpx.imerlabs.com/xbilling_frontend.zip" class="btn btn-default btn-mini">Front-end Billing Package</a>&nbsp;<a href="http://zpx.imerlabs.com/manuals/xbilling_manual.pdf" target="_blank" class="btn btn-warning btn-mini">Application Manual</a>&nbsp;
         </div>
     <div class="zform_wrapper">
         <table class="table table-stripped">
