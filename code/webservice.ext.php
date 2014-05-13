@@ -308,7 +308,7 @@ class webservice extends ws_xmws {
                             $phpmailer->AddAddress($user_data['email_address']);
                             $phpmailer->SendEmail();*/
 
-                            self::sendMail(array('to' => $user_data['email_address'], 'subject' => $subject, 'message' => $emailbody));        
+                            module_controller::sendMail(array('to' => $user_data['email_address'], 'subject' => $subject, 'message' => $emailbody, 'reseller_id' => $user_data['zpx_uid']));        
                         }                
                         $new_invoice_info['reference'] = $invoice_info['reference'];               
                         
@@ -382,9 +382,9 @@ class webservice extends ws_xmws {
                 $user_result['error'] = 1;
                 $user_result['message'] = $user;
             } else {
-                $user_result['fullname'] = $user['fullname'];
+                $user_result['fullname'] = utf8_decode($user['fullname']);
                 $user_result['email'] = $user['email'];
-                $user_result['address'] = $user['address'];
+                $user_result['address'] = utf8_decode($user['address']);
                 $user_result['postcode'] = $user['postcode'];
                 $user_result['phone'] = $user['phone'];
 

@@ -2776,6 +2776,7 @@ class module_controller {
     }
     
     static function sendMail($parms = array()){
+        //global $controller;
 
         if(isset($parms['to']) && isset($parms['subject']) && isset($parms['message'])){
             if(!isset($parms['reseller_id'])){
