@@ -1,4 +1,4 @@
-xBilling v1.1.0
+xBilling v1.1.1
 Billing module for the renowned zPanel(10.1.1)
 
 [![Build Status](https://travis-ci.org/modpluz/xbilling.png?branch=master)](https://travis-ci.org/modpluz/xbilling)
