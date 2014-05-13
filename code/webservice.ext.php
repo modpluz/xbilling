@@ -28,6 +28,11 @@ class webservice extends ws_xmws {
         $pkgs = module_controller::getServicePackages($user_id);
 
         if(is_array($pkgs)){
+            /*foreach($pkgs as $pkg_idx=>$pkg){
+                $pkgs[$pkg_idx]['name'] = htmlentities($pkg['name']);
+                $pkgs[$pkg_idx]['desc'] = htmlentities($pkg['desc']);
+            }*/
+
             $packages = '';
             foreach ($pkgs as $pkg) {
                 //is this package enabled?
@@ -42,8 +47,8 @@ class webservice extends ws_xmws {
                         if($pkg['id']){
                             $response_xml = $response_xml . ws_xmws::NewXMLContentSection('packages', array(
                                         'id' => $pkg['id'],
-                                        'name' => $pkg['name'],
-                                        'desc' => $pkg['desc'],
+                                        'name' => ($pkg['name']),
+                                        'desc' => utf8_decode($pkg['desc']),
                                         'service_periods' => json_encode($pkg_periods),
                                     ));
                         }
@@ -51,11 +56,14 @@ class webservice extends ws_xmws {
                 }
             } 
         }
-        
+
+        //die(var_dump($response_xml));
         $dataobject = new runtime_dataobject();
         $dataobject->addItemValue('response', '');
         $dataobject->addItemValue('content', $response_xml);
         return $dataobject->getDataObject();
+
+        //die(var_dump($result));
     }
 
     /**
@@ -291,15 +299,16 @@ class webservice extends ws_xmws {
                             $emailbody = str_replace("{{password}}", $user_password, $emailbody);
                             $emailbody = str_replace("{{panel_url}}", $panel_url, $emailbody);
 
-                            $phpmailer = new sys_email();
+                            //$phpmailer = new sys_email();
+                            $subject = "Your Order at ".$company_name;                    
                             if(!$billing_enabled_yn){
-                                $phpmailer->Subject = "Welcome to $company_name!";
-                            } else {
-                                $phpmailer->Subject = "Your Order at ".$company_name;                    
+                                $subject = "Welcome to $company_name!";
                             }
-                            $phpmailer->Body = $emailbody;
+                            /*$phpmailer->Body = $emailbody;
                             $phpmailer->AddAddress($user_data['email_address']);
-                            $phpmailer->SendEmail();        
+                            $phpmailer->SendEmail();*/
+
+                            self::sendMail(array('to' => $user_data['email_address'], 'subject' => $subject, 'message' => $emailbody));        
                         }                
                         $new_invoice_info['reference'] = $invoice_info['reference'];               
                         
