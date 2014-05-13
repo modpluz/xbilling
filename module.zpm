@@ -181,7 +181,7 @@
                                 </td>
                             </tr>
 			    <tr>
-                                <th nowrap="nowrap" class="col-sm-3"><: Order Email :>:</th>
+                                <th nowrap="nowrap" class="col-sm-3"><: Order Message :>:</th>
                                 <td>
                                     <textarea rows="5" cols="45" name="order_message" id="txt_order_message"><@ EditOrderMessage @></textarea>
                                 </td>
