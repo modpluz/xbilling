@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * xBilling Module for ZPanel 10.1.0
- * Version : 1.1.0
- * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
+ * xBilling Module for ZPanel 10.1.0, Sentora 1.0.0
+ * Version : 1.2.0
+ * Author :  Aderemi Adewale (modpluz @ Sentora Forums)
  * Email : goremmy@gmail.com
  */
 
@@ -16,7 +16,17 @@ class module_controller {
     static $ok;
     //static $customerror;
     static $module_db = 'zpanel_xbilling';
-    
+    static $server_app = 'zpanel';
+    static $server_vars = array();
+
+
+    public function __construct(){
+        require_once('serverware.php');
+        self::getAppWare();
+    }
+
+   
+
 
 
 /*START - Check for updates added by TGates*/
@@ -1437,7 +1447,7 @@ class module_controller {
         }
 
         $table_1 = self::$module_db.'.x_packages';
-        $table_2 = 'zpanel_core.x_packages';
+        $table_2 = self::$server_app.'_core.x_packages';
         
         /*
             Here, we are going to fetch existing billing packages, then we fetch existing zpx packages, 
@@ -1532,7 +1542,7 @@ class module_controller {
 
          if (is_array($package_periods) && count($package_periods) > 0){
             //fetch package name
-       		$sql_i = "SELECT pk_name_vc FROM zpanel_core.x_packages WHERE pk_id_pk=:pkg_id 
+       		$sql_i = "SELECT pk_name_vc FROM ".self::$server_app."_core.x_packages WHERE pk_id_pk=:pkg_id 
                    		AND pk_deleted_ts IS NULL";
             $bindArray = array(':pkg_id' => $urlvars['pid']);
             $zdbh->bindQuery($sql_i, $bindArray);
@@ -2427,7 +2437,7 @@ class module_controller {
             while ($row = $orders->fetch()) {
                //select order user
               $order_user = 'N/A';
-              $users = $zdbh->prepare("SELECT ac_user_vc FROM zpanel_core.x_accounts 
+              $users = $zdbh->prepare("SELECT ac_user_vc FROM ".self::$server_app."_core.x_accounts 
                                        WHERE ac_id_pk=:order_uid AND ac_deleted_ts IS NULL;");
               $users->bindParam(':order_uid', $row['ac_id_fk']);
               $users->execute();
@@ -2532,7 +2542,7 @@ class module_controller {
         if(isset($formvars['order_id'])){
             $order_uid = self::getOrderInfo($formvars['order_id'], 'ac_id_fk',self::$module_db.'.x_invoices');
             if($order_uid){
-              $users = $zdbh->prepare("SELECT ac_user_vc FROM zpanel_core.x_accounts 
+              $users = $zdbh->prepare("SELECT ac_user_vc FROM ".self::$server_app."_core.x_accounts 
                                        WHERE ac_id_pk=:order_uid AND ac_deleted_ts IS NULL;");
               $users->bindParam(':order_uid', $order_uid);
               $users->execute();
@@ -2724,8 +2734,9 @@ class module_controller {
                                         INNER JOIN ".self::$module_db.".x_orders ON ".self::$module_db.".x_orders.order_id=".self::$module_db.".x_invoices_orders.order_id 
                                         INNER JOIN ".self::$module_db.".x_invoices ON 
                                         ".self::$module_db.".x_invoices.invoice_id=".self::$module_db.".x_invoices_orders.invoice_id 
-                                        INNER JOIN zpanel_core.x_accounts ON zpanel_core.x_accounts.ac_id_pk=x_invoices.ac_id_fk                                         
-                                        INNER JOIN zpanel_core.x_profiles ON zpanel_core.x_profiles.ud_user_fk=zpanel_core.x_accounts.ac_id_pk                                         
+                                        INNER JOIN ".self::$server_app."_core.x_accounts ON ".self::$server_app."_core.x_accounts.ac_id_pk=x_invoices.ac_id_fk                                         
+                                        INNER JOIN ".self::$server_app."_core.x_profiles 
+                                        ON ".self::$server_app."_core.x_profiles.ud_user_fk=".self::$server_app."_core.x_accounts.ac_id_pk                                         
                                         WHERE ".self::$module_db.".x_invoices.invoice_id=:inv_id 
                                         AND invoice_deleted_ts IS NULL AND order_deleted_ts IS NULL 
                                         GROUP BY ".self::$module_db.".x_invoices.invoice_id 
@@ -2776,6 +2787,7 @@ class module_controller {
     }
     
     static function sendMail($parms = array()){
+        //global $controller;
 
         if(isset($parms['to']) && isset($parms['subject']) && isset($parms['message'])){
             if(!isset($parms['reseller_id'])){
@@ -3204,8 +3216,8 @@ class module_controller {
 <?php
   /**
    * API connection settings for xBilling
-   * Version : 102
-   * @author Aderemi Adewale (modpluz @ ZPanel Forums)
+   * Version : 1.2.0
+   * @author Aderemi Adewale (modpluz @ Sentora Forums)
    * Email : goremmy@gmail.com
    * @desc This allows front-end billing package interact with the backend module
   */
@@ -3252,7 +3264,7 @@ class module_controller {
 
          if (is_array($package_periods) && count($package_periods) > 0){
             //fetch package name
-       		$sql_i = "SELECT pk_name_vc FROM zpanel_core.x_packages WHERE pk_id_pk=:pkg_id 
+       		$sql_i = "SELECT pk_name_vc FROM ".self::$server_app."_core.x_packages WHERE pk_id_pk=:pkg_id 
                    		AND pk_deleted_ts IS NULL";
             $bindArray = array(':pkg_id' => $urlvars['pid']);
             $zdbh->bindQuery($sql_i, $bindArray);
@@ -3551,7 +3563,7 @@ class module_controller {
     static function CheckUserExists($username){
         global $zdbh;
          $user_exists = '-1';
-         $res = $zdbh->prepare("SELECT ac_id_pk FROM zpanel_core.x_accounts WHERE ac_user_vc=:zpx_user;");
+         $res = $zdbh->prepare("SELECT ac_id_pk FROM ".self::$server_app."_core.x_accounts WHERE ac_user_vc=:zpx_user;");
          $res->bindParam(':zpx_user', $username);
          $res->execute();
          if ($res->fetchColumn() > 0){
@@ -3567,7 +3579,7 @@ class module_controller {
         global $zdbh;
          $pkg_name = '';
          if($pkg_id){
-             $res = $zdbh->prepare("SELECT pk_name_vc FROM zpanel_core.x_packages 
+             $res = $zdbh->prepare("SELECT pk_name_vc FROM ".self::$server_app."_core.x_packages 
                                         WHERE pk_id_pk=:pkg_id AND pk_deleted_ts IS NULL;");
              $res->bindParam(':pkg_id', $pkg_id);
              $res->execute();
@@ -3658,7 +3670,8 @@ class module_controller {
           $invoice = $orders->fetch();
           if(is_array($invoice)){
             //foreach($invoice as $order){
-          		$sql = "SELECT payment_option_name FROM ".self::$module_db.".x_payment_options  					        WHERE payment_option_id=:option_id AND reseller_ac_id_fk=:user_id 
+          		$sql = "SELECT payment_option_name FROM ".self::$module_db.".x_payment_options 
+                            WHERE payment_option_id=:option_id AND reseller_ac_id_fk=:user_id 
           		            AND option_deleted_ts IS NULL";
                 $bindArray = array(':option_id' => $invoice['payment_option_id'], ':user_id'=>$user_id);
                 $zdbh->bindQuery($sql, $bindArray);
@@ -3672,7 +3685,7 @@ class module_controller {
                 //fetch domain name if we have it
                 $domain_name = '';                   
                 if(isset($invoice['order_vh_fk'])){
-              	   $sql = "SELECT vh_name_vc FROM zpanel_core.x_vhosts 
+              	   $sql = "SELECT vh_name_vc FROM ".self::$server_app."_core.x_vhosts 
               		            WHERE vh_id_pk=:domain_id AND vh_acc_fk=:user_id 
               		            AND vh_deleted_ts IS NULL";
                     $bindArray = array(':domain_id' => $invoice['order_vh_fk'], ':user_id'=>$invoice['ac_id_fk']);
@@ -3686,7 +3699,7 @@ class module_controller {
                 
                 //fetch voucher info....if any
                 if($invoice['invoice_voucher_id']){
-              	   $sql = "SELECT discount,discount_type,voucher_code FROM zpanel_xbilling.x_vouchers 
+              	   $sql = "SELECT discount,discount_type,voucher_code FROM ".self::$module_db.".x_vouchers 
               		            WHERE voucher_id=:vid AND active_yn=1 
               		            AND voucher_deleted_ts IS NULL";
                     $bindArray = array(':vid' => $invoice['invoice_voucher_id']);
@@ -3798,7 +3811,7 @@ class module_controller {
                             if(is_array($order_row)){
                                 //update user
                                 if(isset($invoice_info['ac_id_fk'])){
-                                    $sql = $zdbh->prepare("UPDATE zpanel_core.x_accounts 
+                                    $sql = $zdbh->prepare("UPDATE ".self::$server_app."_core.x_accounts 
                                                             SET ac_enabled_in='1' WHERE ac_id_pk=:uid");
                                     $sql->bindParam(':uid', $invoice_info['ac_id_fk']);
                                     $sql->execute();
@@ -3844,7 +3857,7 @@ class module_controller {
                                         }
                                         
                                         $new_expiry_date = strtotime($renewal_date."+".$period['period_duration']." months");
-                                        $sql = $zdbh->prepare("UPDATE zpanel_core.x_vhosts 
+                                        $sql = $zdbh->prepare("UPDATE ".self::$server_app."_core.x_vhosts 
                                                                 SET vh_expiry_ts=:date,vh_enabled_in='1',
                                                                 vh_invoice_created_yn='0' 
                                                                 WHERE vh_id_pk=:domain_id");
@@ -3876,7 +3889,7 @@ class module_controller {
                 $secure_password = $crypto->CryptParts($crypto->Crypt())->Hash;
                 
                 //update user information
-               $sql = $zdbh->prepare("UPDATE zpanel_core.x_accounts SET ac_enabled_in='1',
+               $sql = $zdbh->prepare("UPDATE ".self::$server_app."_core.x_accounts SET ac_enabled_in='1',
 
                                         ac_pass_vc=:password,ac_passsalt_vc=:pass_salt 
 
@@ -4022,14 +4035,14 @@ class module_controller {
                         //we don't create a duplicate invoice
                         if($row['vh_invoice_created_yn'] == 1){
                             //select invoice reference
-                            $invoice = $zdbh->prepare("SELECT invoice_reference FROM zpanel_xbilling.x_invoices 
-                                                           INNER JOIN zpanel_xbilling.x_invoices_orders ON 
-                                                           zpanel_xbilling.x_invoices_orders.invoice_id=zpanel_xbilling.x_invoices.invoice_id
-                                                           INNER JOIN zpanel_xbilling.x_orders ON 
-                                                           zpanel_xbilling.x_orders.order_id=zpanel_xbilling.x_invoices_orders.order_id
-                                                           WHERE zpanel_xbilling.x_orders.order_vh_fk=:id AND invoice_status='0' 
+                            $invoice = $zdbh->prepare("SELECT invoice_reference FROM ".self::$module_db.".x_invoices 
+                                                           INNER JOIN ".self::$module_db.".x_invoices_orders ON 
+                                                           ".self::$module_db.".x_invoices_orders.invoice_id=".self::$module_db.".x_invoices.invoice_id
+                                                           INNER JOIN ".self::$module_db.".x_orders ON 
+                                                           ".self::$module_db.".x_orders.order_id=".self::$module_db.".x_invoices_orders.order_id
+                                                           WHERE ".self::$module_db.".x_orders.order_vh_fk=:id AND invoice_status='0' 
                                                            AND order_deleted_ts IS NULL 
-                                                           ORDER BY zpanel_xbilling.x_invoices.invoice_id DESC;");
+                                                           ORDER BY ".self::$module_db.".x_invoices.invoice_id DESC;");
                             $invoice->bindParam(':id', $row['vh_id_pk']);
                             $invoice->execute();
                             $invoice_info = $invoice->fetch();
@@ -4156,9 +4169,9 @@ class module_controller {
           $package_period = $numrows->fetch();
             
           //fetch package name
-          $numrows = $zdbh->prepare("SELECT pk_name_vc FROM zpanel_core.x_packages 
+          $numrows = $zdbh->prepare("SELECT pk_name_vc FROM ".self::$server_app.".x_packages 
                                         INNER JOIN ".self::$module_db.".x_packages ON 
-                                        ".self::$module_db.".x_packages.zpx_package_id=zpanel_core.x_packages.pk_id_pk
+                                        ".self::$module_db.".x_packages.zpx_package_id=".self::$server_app.".x_packages.pk_id_pk
                                         WHERE ".self::$module_db.".x_packages.reseller_ac_id_fk=:uid 
                                         AND ".self::$module_db.".x_packages.zpx_package_id=:pkg_id 
                                         AND pk_deleted_ts IS NULL;");
@@ -4540,6 +4553,7 @@ class module_controller {
                 }
                
 
+                // Copy error pages over
                 fs_director::CreateDirectory($vhost_path . "/_errorpages/");
                 $errorpages = ctrl_options::GetSystemOption('static_dir') . "/errorpages/";
                 if (is_dir($errorpages)) {
@@ -4945,9 +4959,9 @@ class module_controller {
             }
             
             //fetch package name
-            $numrows = $zdbh->prepare("SELECT pk_name_vc FROM zpanel_core.x_packages 
+            $numrows = $zdbh->prepare("SELECT pk_name_vc FROM ".self::$server_app."_core.x_packages 
                                         INNER JOIN ".self::$module_db.".x_packages ON 
-                                        ".self::$module_db.".x_packages.zpx_package_id=zpanel_core.x_packages.pk_id_pk
+                                        ".self::$module_db.".x_packages.zpx_package_id=".self::$server_app."_core.x_packages.pk_id_pk
                                         WHERE ".self::$module_db.".x_packages.reseller_ac_id_fk=:uid 
                                         AND ".self::$module_db.".x_packages.zpx_package_id=:pkg_id;");
             $numrows->bindParam(':uid', $data['zpx_uid']);
@@ -5083,7 +5097,7 @@ class module_controller {
         $secure_password = $crypto->CryptParts($crypto->Crypt())->Hash;
                 
         //update user information
-        $sql = $zdbh->prepare("UPDATE zpanel_core.x_accounts SET ac_enabled_in='1',
+        $sql = $zdbh->prepare("UPDATE ".self::$server_app."_core.x_accounts SET ac_enabled_in='1',
                                  ac_pass_vc=:password,ac_passsalt_vc=:pass_salt 
                                  WHERE ac_id_pk=:user_id");
         $sql->bindParam(':user_id', $user_id);
@@ -5800,8 +5814,8 @@ class module_controller {
                                         INNER JOIN ".self::$module_db.".x_orders ON ".self::$module_db.".x_orders.order_id=".self::$module_db.".x_invoices_orders.order_id 
                                         INNER JOIN ".self::$module_db.".x_invoices ON 
                                         ".self::$module_db.".x_invoices.invoice_id=".self::$module_db.".x_invoices_orders.invoice_id 
-                                        INNER JOIN zpanel_core.x_accounts ON zpanel_core.x_accounts.ac_id_pk=x_invoices.ac_id_fk                                         
-                                        INNER JOIN zpanel_core.x_profiles ON zpanel_core.x_profiles.ud_user_fk=zpanel_core.x_accounts.ac_id_pk                                         
+                                        INNER JOIN ".self::$server_app."_core.x_accounts ON ".self::$server_app."_core.x_accounts.ac_id_pk=x_invoices.ac_id_fk                                         
+                                        INNER JOIN ".self::$server_app."_core.x_profiles ON ".self::$server_app."_core.x_profiles.ud_user_fk=".self::$server_app."_core.x_accounts.ac_id_pk                                         
                                         WHERE ".self::$module_db.".x_invoices.invoice_id=:inv_id 
                                         AND invoice_deleted_ts IS NULL AND order_deleted_ts IS NULL 
                                         GROUP BY ".self::$module_db.".x_invoices.invoice_id 
@@ -5878,7 +5892,7 @@ class module_controller {
                              
                                 $new_expiry_date = strtotime($renewal_date."+".$period['period_duration']." months");
                                 
-                                $sql = $zdbh->prepare("UPDATE zpanel_core.x_vhosts 
+                                $sql = $zdbh->prepare("UPDATE ".self::$server_app."_core.x_vhosts 
                                                          SET vh_expiry_ts=:date,vh_enabled_in='1',
                                                          vh_invoice_created_yn='0' 
                                                          WHERE vh_id_pk=:domain_id");

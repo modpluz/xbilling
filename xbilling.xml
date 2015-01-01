@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <updateserver>
-	<latestversion>1.1.0</latestversion>
+	<latestversion>1.1.1</latestversion>
 	<downloadurl>http://zpx.imerlabs.com/zpp/xbilling.zpp</downloadurl>
 	<desc>This module empower ZPanel with the ability of billable clients.</desc>
 	<updatedesc>Added update checker and XML datafile.</updatedesc>

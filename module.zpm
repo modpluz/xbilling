@@ -41,7 +41,7 @@
 <div class="tab-pane <% if ViewSettings %>active<% endif %>" id="website_settings">
 <% if ViewSettings %>
         <div align="right" class="top-margin-ten bottom-margin-twenty">
-            <strong>Important Downloads:</strong> <a href="./?module=xbilling&action=FetchConfig" target="_blank" class="btn btn-info btn-mini">Front-end Config Script</a>&nbsp;<a href="http://zpx.imerlabs.com/frontend_billing.zip" class="btn btn-default btn-mini">Front-end Billing Package</a>&nbsp;<a href="http://zpx.imerlabs.com/manuals/xbilling_manual.pdf" target="_blank" class="btn btn-warning btn-mini">Application Manual</a>&nbsp;
+            <strong>Important Downloads:</strong> <a href="./?module=xbilling&action=FetchConfig" target="_blank" class="btn btn-info btn-mini">Front-end Config Script</a>&nbsp;<a href="http://zpx.imerlabs.com/xbilling_frontend.zip" class="btn btn-default btn-mini">Front-end Billing Package</a>&nbsp;<a href="http://zpx.imerlabs.com/manuals/xbilling_manual.pdf" target="_blank" class="btn btn-warning btn-mini">Application Manual</a>&nbsp;
         </div>
     <div class="zform_wrapper">
         <table class="table table-stripped">
@@ -181,7 +181,7 @@
                                 </td>
                             </tr>
 			    <tr>
-                                <th nowrap="nowrap" class="col-sm-3"><: Order Email :>:</th>
+                                <th nowrap="nowrap" class="col-sm-3"><: Order Message :>:</th>
                                 <td>
                                     <textarea rows="5" cols="45" name="order_message" id="txt_order_message"><@ EditOrderMessage @></textarea>
                                 </td>
@@ -930,7 +930,7 @@
                             </tr>
                             <tr>
                                 <th nowrap="nowrap"><: Discount :>:</th>
-                                <td class="vertical-baseline"><input name="discount" type="text" id="voucher_discount" size="2" value="<@ CurrentVoucherDiscount @>" /> %</td>
+                                <td class="vertical-baseline"><input name="discount" type="text" id="voucher_discount" size="2" value="<@ CurrentVoucherDiscount @>" maxlength="2" /> %</td>
                             </tr>
                             <tr>
                                 <th nowrap="nowrap"><: Discount Type :>:</th>
@@ -1029,7 +1029,7 @@
                             </tr>
                             <tr>
                                 <th nowrap="nowrap"><: Discount :>:</th>
-                                <td class="vertical-baseline"><input name="discount" type="text" id="voucher_discount" size="2" value="5" /> %</td>
+                                <td class="vertical-baseline"><input name="discount" type="text" id="voucher_discount" size="2" value="5" maxlength="2" /> %</td>
                             </tr>
                             <tr>
                                 <th nowrap="nowrap"><: Discount Type :>:</th>
