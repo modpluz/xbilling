@@ -1,5 +1,5 @@
-xBilling v1.1.0
-Billing module for the renowned zPanel(10.1.1)
+xBilling v1.2.0
+Billing module for the renowned zPanel(10.1.1) and Sentora 1.0
 
 [![Build Status](https://travis-ci.org/modpluz/xbilling.png?branch=master)](https://travis-ci.org/modpluz/xbilling)
 

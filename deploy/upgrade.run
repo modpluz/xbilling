@@ -1,8 +1,8 @@
 <?php
 /**
  *
- * Upgrade script for xBilling Module for ZPanel 10.0.2
- * Version : 100
+ * Upgrade script for xBilling Module for ZPanel 10.1.0, Sentora 1.0.0
+ * Version : 1.2.0
  * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
  * Email : goremmy@gmail.com
  */
@@ -19,12 +19,18 @@ require_once('dryden/fs/director.class.php');
 require_once('inc/dbc.inc.php');
 
 
+/* Get app variables depending on server software (Sentora or Zpanel) */
+require_once('../code/serverware.php');
+$server_vars = getAppWare();
+/* Get app variables depending on server software (Sentora or Zpanel) */
+
+
 //upgrade
 upgradeModule();
 
 
 // START - ZPX Module Updating added by TGates
-UpgradeModuleB('110', 'xbilling');
+UpgradeModuleB('120', 'xbilling');
 
 function UpgradeModuleB($newversion, $module){
     global $zdbh;
@@ -38,7 +44,7 @@ function upgradeModule(){
         
     //update payment methods table
     try {
-        $numrows = $zdbh->prepare("ALTER TABLE `zpanel_xbilling`.`x_payment_methods` 
+        $numrows = $zdbh->prepare("ALTER TABLE `".$server_vars['app']."_xbilling`.`x_payment_methods` 
                                     ADD `method_deleted_ts` INT(30) NULL AFTER `reseller_ac_id_fk`;");
         $numrows->execute();
     } catch(Exception $e){
@@ -47,7 +53,7 @@ function upgradeModule(){
     
     //add free package column
     try {
-        $numrows = $zdbh->prepare("ALTER TABLE `zpanel_xbilling`.`x_packages` ADD `free_package_yn` TINYINT(1) NOT NULL DEFAULT '0' AFTER `enabled_yn`;");
+        $numrows = $zdbh->prepare("ALTER TABLE `".$server_vars['app']."_xbilling`.`x_packages` ADD `free_package_yn` TINYINT(1) NOT NULL DEFAULT '0' AFTER `enabled_yn`;");
         $numrows->execute();
     } catch(Exception $e){
         // column exists, continue
@@ -56,7 +62,7 @@ function upgradeModule(){
 
     //add invoice created column
     try {
-        $numrows = $zdbh->prepare("ALTER TABLE  zpanel_core.`x_vhosts` ADD  `vh_invoice_created_yn` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `vh_expiry_ts`;");
+        $numrows = $zdbh->prepare("ALTER TABLE  ".$server_vars['app']."_core.`x_vhosts` ADD  `vh_invoice_created_yn` TINYINT( 1 ) NOT NULL DEFAULT  '0' AFTER  `vh_expiry_ts`;");
         $numrows->execute();
     } catch(Exception $e){
         // column exists, continue
@@ -64,7 +70,7 @@ function upgradeModule(){
 
     //add invoice voucher id column to invoices
     try {
-        $numrows = $zdbh->prepare("ALTER TABLE  zpanel_xbilling.`x_invoices` ADD  `invoice_voucher_id` INT( 25 ) NOT NULL DEFAULT  '0' AFTER  `invoice_reference`;");
+        $numrows = $zdbh->prepare("ALTER TABLE  ".$server_vars['app']."_xbilling.`x_invoices` ADD  `invoice_voucher_id` INT( 25 ) NOT NULL DEFAULT  '0' AFTER  `invoice_reference`;");
         $numrows->execute();
     } catch(Exception $e){
         // column exists, continue
@@ -72,7 +78,7 @@ function upgradeModule(){
 
     //add vouchers table
     try {
-        $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `zpanel_xbilling`.`x_vouchers` (
+        $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `".$server_vars['app']."_xbilling`.`x_vouchers` (
                                       `voucher_id` int(25) NOT NULL AUTO_INCREMENT,                                      
                                       `active_yn` tinyint(1) NOT NULL,
                                       `usage_type` tinyint(1) NOT NULL DEFAULT '1',                                      
