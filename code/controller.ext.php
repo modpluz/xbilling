@@ -32,7 +32,8 @@ class module_controller {
 /*START - Check for updates added by TGates*/
 // Module update check functions
     static function getModuleVersion() {
-        global $zdbh, $controller;
+        global $controller;
+
         $module_path="./modules/" . $controller->GetControllerRequest('URL', 'module');
         
         // Get Update URL and Version From module.xml
@@ -44,7 +45,7 @@ class module_controller {
     }
     
     static function getCheckUpdate() {
-        global $zdbh, $controller;
+        global $controller;
         $module_path="./modules/" . $controller->GetControllerRequest('URL', 'module');
         
         // Get Update URL and Version From module.xml
