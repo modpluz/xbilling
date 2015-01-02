@@ -20,8 +20,8 @@ require_once('inc/dbc.inc.php');
 
 
 /* Get app variables depending on server software (Sentora or Zpanel) */
-require_once('../code/serverware.php');
-$server_vars = getAppWare();
+require_once('modules/xbilling/code/serverware.php');
+$server_vars = module_serverware::getWare();
 /* Get app variables depending on server software (Sentora or Zpanel) */
 
 

@@ -22,7 +22,7 @@ class module_serverware {
         if (isset($db_info['database_name'])){
            $app = 'zpanel';
         } else {
-            // Is this a zpanel installation?
+            // Or a sentora installation?
             $numrows = $zdbh->prepare("SELECT SCHEMA_NAME AS database_name FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'sentora_core'");
             $numrows->execute(); 
             $db_info = $numrows->fetch();        
