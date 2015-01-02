@@ -22,7 +22,11 @@ class module_controller {
 
     public function __construct(){
         require_once('serverware.php');
-        self::getAppWare();
+        self::$server_vars = self::getAppWare();
+        if(count(server_vars)){
+           self::$server_app = self::$server_vars['app'];
+           self::$module_db = self::$server_vars['app'].'_xbilling';
+        }
     }
 
    
