@@ -27,7 +27,7 @@ $server_vars = module_serverware::getWare();
 installModule();
 
 function installModule(){
-    global $zdbh;
+    global $zdbh, $server_vars;
         
     //create database
     $numrows = $zdbh->prepare("CREATE DATABASE `".$server_vars['app']."_xbilling` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
