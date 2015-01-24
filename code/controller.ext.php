@@ -6,6 +6,7 @@
  * Author :  Aderemi Adewale (modpluz @ Sentora Forums)
  * Email : goremmy@gmail.com
  */
+require_once('serverware.php');
 
 class module_controller {
 
@@ -19,15 +20,10 @@ class module_controller {
     static $server_app = 'zpanel';
     static $server_vars = array();
 
-
-    public function __construct(){
-        require_once('serverware.php');
-        self::$server_vars = self::getAppWare();
-        if(count(server_vars)){
-           self::$server_app = self::$server_vars['app'];
-           self::$module_db = self::$server_vars['app'].'_xbilling';
-        }
-    }
+   
+    //public function __construct(){
+        
+    //}
 
    
 
@@ -94,7 +90,16 @@ class module_controller {
    /* Load CSS and JS files */
     static function getInit() {
         global $controller;
+        
+        self::$server_vars = module_serverware::getWare();
+        
+        if(count(self::$server_vars)){
+           self::$server_app = self::$server_vars['app'];
+           self::$module_db = self::$server_vars['app'].'_xbilling';
+        }
+        
         $line = '<link rel="stylesheet" type="text/css" href="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/xbilling.css">';
+        $line .= '<script type="text/javascript">var js_app = eval("'.self::$server_vars['js_app'].'");</script>';
         $line .= '<script type="text/javascript" src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/jquery.validate-1.11.1.min.js"></script>';
         $line .= '<script type="text/javascript" src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/xbilling.js"></script>';
         $line .= '<script type="text/javascript" src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/ckeditor/ckeditor.js"></script>';
@@ -1735,6 +1740,11 @@ class module_controller {
         
         }
     }
+    
+    /*static function getJSApp(){
+        
+        return self::$server_vars['js_app'];        
+    }*/
     
     static function getPaymentOptionFieldCount(){
         global $zdbh, $controller;
@@ -5107,6 +5117,7 @@ class module_controller {
                                  WHERE ac_id_pk=:user_id");
         $sql->bindParam(':user_id', $user_id);
         $sql->bindParam(':password', $secure_password);
+
         $sql->bindParam(':pass_salt', $randomsalt);
         $sql->execute();
         

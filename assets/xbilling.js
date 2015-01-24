@@ -1,7 +1,7 @@
 $(function() {
 	$('#frm_create_payment_option').submit(function (e){
 		$('#new_payment_option_msg').hide();
-		//zPanel.loader.hideLoader();
+		//js_app.loader.hideLoader();
 		if(!$('#txt_payment_option_name').val()){
 			$('#new_payment_option_msg').html(form_msgs['xbilling_empty_option_title']);
 			$('#new_payment_option_msg').show();
@@ -18,14 +18,14 @@ $(function() {
 		}
 		
 		if($('#frm_create_payment_option').valid()){
-			zPanel.loader.showLoader();
+			js_app.loader.showLoader();
 		} else {
 			return false;
 		}
 	});
 
 	$('#frm_update_payment_option').submit(function (e){
-		zPanel.loader.hideLoader();
+		js_app.loader.hideLoader();
 		$('#edit_payment_option_msg').hide();
 		
 		
@@ -45,7 +45,7 @@ $(function() {
 		}
 		
 		if($('#frm_update_payment_option').valid()){
-			zPanel.loader.showLoader();
+			js_app.loader.showLoader();
 		} else {
 			return false;
 		}				
@@ -54,17 +54,17 @@ $(function() {
 	$('#frm_create_payment_method').submit(function (e){
 		$('#new_payment_method_msg').hide();
 		if($('#frm_create_payment_method').valid()){
-			zPanel.loader.showLoader();
+			js_app.loader.showLoader();
 		} else {
 			return false;
 		}
 	});
 
 	$('#frm_update_payment_method').submit(function (e){
-		zPanel.loader.hideLoader();
+		js_app.loader.hideLoader();
 		$('#edit_payment_method_msg').hide();
 		if($('#frm_update_payment_method').valid()){
-			zPanel.loader.showLoader();
+			js_app.loader.showLoader();
 		} else {
 			return false;
 		}
@@ -73,7 +73,7 @@ $(function() {
 	$('.delete-plan').on('click', function (){
 		var _id = $(this).attr('data-id');
 		//Confirm Plan Delete
-		zPanel.dialog.confirm({
+		js_app.dialog.confirm({
 			title: form_msgs['xbilling_plan_delete_dialog_title'],
 			message: form_msgs['xbilling_item_delete_confirm_msg'],
 			width: 300,
@@ -91,7 +91,7 @@ $(function() {
 			okCallback: function() { 
 //				$('#svn_item_id').val(_id);
 				$('#frmServicePeriod').append('<input type="hidden" name="x_item_id" value="'+_id+'">');
-				zPanel.loader.showLoader();
+				js_app.loader.showLoader();
 				_change_action('frmServicePeriod','DeletePeriod');
 					//$('#frm_forwarded_domains').submit(); 
 			}
@@ -102,7 +102,7 @@ $(function() {
 	$('.delete-payment-option').on('click', function (){
 		var _id = $(this).attr('data-id');
 		//Confirm Plan Delete
-		zPanel.dialog.confirm({
+		js_app.dialog.confirm({
 			title: form_msgs['xbilling_payment_option_delete_dialog_title'],
 			message: form_msgs['xbilling_item_delete_confirm_msg'],
 			width: 300,
@@ -119,7 +119,7 @@ $(function() {
 			cancelCallback: function() { return false; },
 			okCallback: function() { 
 				$('#frmPaymentOption').append('<input type="hidden" name="x_item_id" value="'+_id+'">');
-				zPanel.loader.showLoader();
+				js_app.loader.showLoader();
 				_change_action('frmPaymentOption','DeletePaymentOption');
 			}
 		});
@@ -129,7 +129,7 @@ $(function() {
 	$('.delete-voucher').on('click', function (){
 		var _id = $(this).attr('data-id');
 		//Confirm Plan Delete
-		zPanel.dialog.confirm({
+		js_app.dialog.confirm({
 			title: form_msgs['xbilling_voucher_delete_dialog_title'],
 			message: form_msgs['xbilling_item_delete_confirm_msg'],
 			width: 300,
@@ -146,7 +146,7 @@ $(function() {
 			cancelCallback: function() { return false; },
 			okCallback: function() { 
 				$('#frmVouchers').append('<input type="hidden" name="x_item_id" value="'+_id+'">');
-				zPanel.loader.showLoader();
+				js_app.loader.showLoader();
 				_change_action('frmVouchers','DeleteVoucher');
 			}
 		});
@@ -155,7 +155,7 @@ $(function() {
 	$('.resend-invoice').on('click', function (){
 		var _id = $(this).attr('data-id');
 		//Confirm Invoice Resend
-		zPanel.dialog.confirm({
+		js_app.dialog.confirm({
 			title: form_msgs['xbilling_invoice_resend_dialog_title'],
 			message: form_msgs['xbilling_invoice_resend_confirm_msg'],
 			width: 300,
@@ -172,7 +172,7 @@ $(function() {
 			cancelCallback: function() { return false; },
 			okCallback: function() { 
 				$('#frmOrders').append('<input type="hidden" name="x_item_id" value="'+_id+'">');
-				zPanel.loader.showLoader();
+				js_app.loader.showLoader();
 				_change_action('frmOrders','ResendInvoice');
 			}
 		});
@@ -188,7 +188,7 @@ $(function() {
 	$('#frm_create_new_account').submit(function (e){
 		$('#new_account_msg').hide();
 		if($('#frm_create_payment_method').valid()){
-			zPanel.loader.showLoader();
+			js_app.loader.showLoader();
 		} else {
 			return false;
 		}
@@ -256,7 +256,7 @@ function _view(view){
     
     function _package_periods(pkg_id){
         if(pkg_id){
-		zPanel.loader.showLoader();
+		js_app.loader.showLoader();
 		$div = $('<div><form action="./?module=xbilling&action=UpdatePackagePeriods" method="post" id="frmPackagesPeriods"></form></div>');
 		$div.attr('id', 'package_plans');
         
@@ -276,7 +276,7 @@ function _view(view){
 			 $div.html('<p><: An error occured while fetching package service plans. :>');
 		    }
 	    });
-	    zPanel.loader.hideLoader();
+	    js_app.loader.hideLoader();
 	    $('#xbillingModalTitle').html('Manage Service Plans');
 	    $('#xbillingModalBody').html($div);
 	    

@@ -1228,6 +1228,7 @@ Kind Regards,
 <script language="javascript" type="text/javascript">
  <!--//--><![CDATA[//>
  <!--
+    
     var form_msgs = [];
  <% if ViewPaymentOptions %>
     var total_fields = <@ PaymentOptionFieldCount @>;

@@ -27,7 +27,7 @@ $server_vars = module_serverware::getWare();
 removeModule();
 
 function removeModule(){
-    global $zdbh;
+    global $zdbh, $server_vars;
         
     //delete database
     $numrows = $zdbh->prepare("DROP DATABASE `".$server_vars['app']."_xbilling`;");
