@@ -93,6 +93,18 @@ function upgradeModule(){
     } catch(Exception $e){
         // table exists, continue
     }
+    
+            
+    //update vouchers table add reseller id
+    try {
+        $numrows = $zdbh->prepare("ALTER TABLE `".$server_vars['app']."_xbilling`.`x_vouchers` 
+                                    ADD `reseller_ac_id_fk` INT(30) NULL AFTER `voucher_id`;");
+        $numrows->execute();
+    } catch(Exception $e){
+        // column exists, continue
+    }
+    
+
   
 }
 
