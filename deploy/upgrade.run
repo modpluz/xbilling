@@ -40,7 +40,7 @@ function UpgradeModuleB($newversion, $module){
 // END - ZPX Module Updating added by TGates
 
 function upgradeModule(){
-    global $zdbh;
+    global $zdbh, $server_vars;
         
     //update payment methods table
     try {
