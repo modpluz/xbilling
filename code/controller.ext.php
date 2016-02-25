@@ -92,6 +92,8 @@ class module_controller {
         global $controller;
         
         self::$server_vars = module_serverware::getWare();
+
+die(var_dump(self::$server_app));
         
         if(count(self::$server_vars)){
            self::$server_app = self::$server_vars['app'];
