@@ -42,7 +42,7 @@ class module_serverware {
                                         );
            //self::$server_vars = $server_vars;
 
-die(var_dump($server_vars));
+
             return $server_vars;
         }
 
