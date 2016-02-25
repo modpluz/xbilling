@@ -16,8 +16,8 @@ class module_controller {
     static $view;
     static $ok;
     //static $customerror;
-    static $module_db = 'zpanel_xbilling';
-    static $server_app = 'zpanel';
+    static $module_db = 'sentora_xbilling';
+    static $server_app = 'sentora';
     static $server_vars = array();
 
    
