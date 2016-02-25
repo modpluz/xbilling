@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  *
  * xBilling Module for ZPanel 10.1.0, Sentora 1.0.0
