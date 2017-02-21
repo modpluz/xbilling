@@ -1,12 +1,11 @@
 <?php
 /**
  *
- * xBilling Module for ZPanel 10.1.0, Sentora 1.0.0
- * Version : 1.2.0
- * Author :  Aderemi Adewale (modpluz @ Sentora Forums)
+ * xBilling Module for Sentora 1.0.0
+ * Version : 1.2.1
+ * Author :  Remi Adewale (modpluz @ Sentora Forums)
  * Email : goremmy@gmail.com
  */
-require_once('serverware.php');
 
 class module_controller {
 
@@ -15,19 +14,8 @@ class module_controller {
     static $file_error;
     static $view;
     static $ok;
-    //static $customerror;
-    static $module_db = 'zpanel_xbilling';
-    static $server_app = 'zpanel';
-    static $server_vars = array();
-
-   
-    //public function __construct(){
-        
-    //}
-
-   
-
-
+    static $module_db = 'sentora_xbilling';
+    static $server_app = 'sentora';
 
 /*START - Check for updates added by TGates*/
 // Module update check functions
@@ -91,15 +79,11 @@ class module_controller {
     static function getInit() {
         global $controller;
         
-        self::$server_vars = module_serverware::getWare();
-        
-        if(count(self::$server_vars)){
-           self::$server_app = self::$server_vars['app'];
-           self::$module_db = self::$server_vars['app'].'_xbilling';
-        }
+        self::$server_app = 'sentora';
+        self::$module_db = 'sentora_xbilling';
         
         $line = '<link rel="stylesheet" type="text/css" href="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/xbilling.css">';
-        $line .= '<script type="text/javascript">var js_app = eval("'.self::$server_vars['js_app'].'");</script>';
+        $line .= '<script type="text/javascript">var js_app = \'Sentora\';</script>';
         $line .= '<script type="text/javascript" src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/jquery.validate-1.11.1.min.js"></script>';
         $line .= '<script type="text/javascript" src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/xbilling.js"></script>';
         $line .= '<script type="text/javascript" src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/ckeditor/ckeditor.js"></script>';
@@ -1740,11 +1724,7 @@ class module_controller {
         
         }
     }
-    
-    /*static function getJSApp(){
-        
-        return self::$server_vars['js_app'];        
-    }*/
+
     
     static function getPaymentOptionFieldCount(){
         global $zdbh, $controller;
@@ -3215,7 +3195,7 @@ class module_controller {
         $api_key = $setting['so_value_tx'];
         
         $settings = $zdbh->prepare("SELECT so_value_tx FROM x_settings 
-                                     WHERE so_name_vc='zpanel_domain';");
+                                     WHERE so_name_vc='sentora_domain';");
         $settings->execute();
         $setting = $settings->fetch();
         $panel_url = $setting['so_value_tx'];
@@ -5127,7 +5107,7 @@ class module_controller {
     
     static function getPanelURL(){
         global $zdbh;
-        $numrows = $zdbh->prepare("SELECT so_value_tx FROM x_settings WHERE so_name_vc='zpanel_domain' LIMIT 1");
+        $numrows = $zdbh->prepare("SELECT so_value_tx FROM x_settings WHERE so_name_vc='sentora_domain' LIMIT 1");
         $numrows->execute();
         $panel = $numrows->fetch();
         return $panel['so_value_tx'];

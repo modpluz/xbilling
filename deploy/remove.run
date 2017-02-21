@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * Un-Installer for xBilling Module for ZPanel 10.1.0, Sentora 1.0.0
- * Version : 1.2.0
- * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
+ * Un-Installer for xBilling Module for Sentora 1.0.0
+ * Version : 1.2.1
+ * Author :  Remi Adewale (modpluz @ Sentora Forums)
  * Email : goremmy@gmail.com
  */
 
@@ -18,30 +18,26 @@ require_once('dryden/ctrl/users.class.php');
 require_once('dryden/fs/director.class.php');
 require_once('inc/dbc.inc.php');
 
-/* Get app variables depending on server software (Sentora or Zpanel) */
-require_once('modules/xbilling/code/serverware.php');
-$server_vars = module_serverware::getWare();
-/* Get app variables depending on server software (Sentora or Zpanel) */
 
 //uninstall
 removeModule();
 
 function removeModule(){
-    global $zdbh, $server_vars;
+    global $zdbh;
         
     //delete database
-    $numrows = $zdbh->prepare("DROP DATABASE `".$server_vars['app']."_xbilling`;");
+    $numrows = $zdbh->prepare("DROP DATABASE `sentora_xbilling`;");
     $numrows->execute();
     
     //alter zpanel_core tables
-    $numrows = $zdbh->prepare("ALTER TABLE  ".$server_vars['app']."_core.`x_vhosts` DROP `vh_expiry_ts`");
+    $numrows = $zdbh->prepare("ALTER TABLE  sentora_core.`x_vhosts` DROP `vh_expiry_ts`");
     $numrows->execute();
 
-    $numrows = $zdbh->prepare("ALTER TABLE  ".$server_vars['app']."_core.`x_vhosts` DROP `vh_invoice_created_yn`");
+    $numrows = $zdbh->prepare("ALTER TABLE  sentora_core.`x_vhosts` DROP `vh_invoice_created_yn`");
     $numrows->execute();
 
 
-    $numrows = $zdbh->prepare("ALTER TABLE  ".$server_vars['app']."_core.`x_vhosts` DROP `expiration_reminder_sent_yn`");
+    $numrows = $zdbh->prepare("ALTER TABLE  sentora_core.`x_vhosts` DROP `expiration_reminder_sent_yn`");
     $numrows->execute();
     
 }

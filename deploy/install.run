@@ -1,9 +1,9 @@
 <?php
 /**
  *
- * Installer for xBilling Module for ZPanel 10.1.0, Sentora 1.0.0
- * Version : 1.2.0
- * Author :  Aderemi Adewale (modpluz @ ZPanel Forums)
+ * Installer for xBilling Module for Sentora 1.0.0
+ * Version : 1.2.1
+ * Author :  Remi Adewale (modpluz @ Sentora Forums)
  * Email : goremmy@gmail.com
  */
 
@@ -18,20 +18,15 @@ require_once('dryden/ctrl/users.class.php');
 require_once('dryden/fs/director.class.php');
 require_once('inc/dbc.inc.php');
 
-/* Get app variables depending on server software (Sentora or Zpanel) */
-require_once('modules/xbilling/code/serverware.php');
-$server_vars = module_serverware::getWare();
-/* Get app variables depending on server software (Sentora or Zpanel) */
-
 //install
 installModule();
 
 function installModule(){
-    global $zdbh, $server_vars;
+    global $zdbh;
         
     //create database
-    $numrows = $zdbh->prepare("CREATE DATABASE `".$server_vars['app']."_xbilling` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-                                USE `".$server_vars['app']."_xbilling`;");
+    $numrows = $zdbh->prepare("CREATE DATABASE `sentora_xbilling` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+                                USE `sentora_xbilling`;");
     $numrows->execute();
 
    //create tables
@@ -92,7 +87,7 @@ function installModule(){
      $numrows->execute();
 
      $numrows = $zdbh->prepare("CREATE TABLE IF NOT EXISTS `x_packages` (
-                                      `zpx_package_id` int(11) NOT NULL DEFAULT '0' COMMENT 'pk_id_pk from zpanel_core.x_packages',
+                                      `zpx_package_id` int(11) NOT NULL DEFAULT '0' COMMENT 'pk_id_pk from sentora_core.x_packages',
                                       `reseller_ac_id_fk` int(25) NOT NULL DEFAULT '0',
                                       `package_desc` varchar(225) NOT NULL DEFAULT '',
                                       `free_package_yn` tinyint(1) NOT NULL DEFAULT '0',
@@ -169,14 +164,17 @@ function installModule(){
                                 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
       $numrows->execute();
 
-      //alter zpanel_core tables
-      $numrows = $zdbh->prepare("ALTER TABLE  ".$server_vars['app']."_core.`x_vhosts` ADD 
-                                    `vh_expiry_ts` INT(30) NOT NULL DEFAULT '0' AFTER  `vh_created_ts`,
-                                    ADD `vh_invoice_created_yn` tinyint(1) NOT NULL DEFAULT '0', 
-                                    ADD `expiration_reminder_sent_yn` tinyint(1) NOT NULL DEFAULT '0'
-                                    AFTER  `vh_expiry_ts`");
-      $numrows->execute();
-      
+      //alter sentora_core tables
+      try {
+        $numrows = $zdbh->prepare("ALTER TABLE  sentora_core.`x_vhosts` ADD 
+                                      `vh_expiry_ts` INT(30) NOT NULL DEFAULT '0' AFTER  `vh_created_ts`,
+                                      ADD `vh_invoice_created_yn` tinyint(1) NOT NULL DEFAULT '0', 
+                                      ADD `expiration_reminder_sent_yn` tinyint(1) NOT NULL DEFAULT '0'
+                                      AFTER  `vh_expiry_ts`");
+        $numrows->execute();
+      } catch (Exception $e){
+        
+      }
       
       //Insert Default Records
       
@@ -236,39 +234,6 @@ function installModule(){
                                     (1, 'notify_url', 'IPN URL');
                                     ");
       $numrows->execute();
-      
-      //PayGate and MyGate
-      /*$numrows = $zdbh->prepare("INSERT INTO `x_payment_options` (`payment_option_id`, `payment_option_name`, `payment_option_form_html`, `reseller_ac_id_fk`, `enabled_yn`, `option_deleted_ts`
-                                    ) VALUES(2, 'PayGate.co.za', '<form name=\"frm_pay\" action=\"https://www.paygate.co.za/PayWebv2/process.trans\" method=\"post\">
-                                                                    <input type=\"hidden\" id=\"payment_method_id\" name=\"payment_method\" value=\"\">
-                                                                    <input name=\"PAYGATE_ID\" type=\"hidden\" value=\"{{paygate_id}}\" />
-                                                                    <input name=\"REFERENCE\" type=\"hidden\" value=\"{{invoice_id}}\" />
-                                                                    <input name=\"AMOUNT\" type=\"hidden\" value=\"{{invoice_amount}}\" />
-                                                                    <input name=\"CURRENCY\" type=\"hidden\" value=\"{{currency}}\" />
-                                                                    <input name=\"RETURN_URL\" type=\"hidden\" value=\"{{return_url}}\" />
-                                                                    <input name=\"TRANSACTION_DATE\" type=\"hidden\" value=\"{{payment_date}}\" />
-                                                                    <input name=\"EMAIL\" type=\"hidden\" value=\"{{client_email}}\" />
-                                                                    <input name=\"CHECKSUM\" type=\"hidden\" value=\"{{checksum}}\" />
-                                                                    <input type=\"submit\" value=\"Make Payment\" class=\"submit\" />
-                                                                    </form>', -1, 1, NULL),(3, 'MyGate.co.za', '<form name=\"frm_pay\" action=\"https://www.mygate.co.za/virtual/8x0x0/dsp_ecommercepaymentparent.cfm\" method=\"post\">
-                                                                    <input type=\"hidden\" name=\"Mode\" value="1" />
-                                                                    <input type=\"hidden\" name=\"txtMerchantID\" value=\"{{merchant_id}}\" />
-                                                                    <input type=\"hidden\" name=\"txtApplicationID\" value=\"{{application_id}}\" />
-                                                                    <input type=\"hidden\" name=\"txtMerchantReference\" value=\"{{invoice_id}}\" />
-                                                                    <input type=\"hidden\" name=\"txtPrice\" value=\"{{invoice_amount}}\" />
-                                                                    <input type=\"hidden\" name=\"txtCurrencyCode\" value=\"{{currency}}\" />
-                                                                    <input type=\"hidden\" name=\"txtRedirectSuccessfulURL\" value=\"{{success_url}}\">
-                                                                    <input type=\"hidden\" name=\"txtRedirectFailedURL\" value=\"{{failure_url}}\" />
-                                                                    <input type=\"hidden\" name=\"Variable1\" value=\"{{checksum}}\" />
-                                                                    <input type=\"submit\" value=\"Make Payment\" class=\"submit\" />
-                                                                    </form>', -1, 1, NULL);
-");
-      $numrows->execute();
-
-      $numrows = $zdbh->prepare("INSERT INTO `x_payment_methods` (`method_id`, `payment_option_id`, `enabled_yn`, `reseller_ac_id_fk`, `method_deleted_ts`
-                                    ) VALUES(3, 3, 1, -1, NULL),(4, 3, 1, -1, NULL),(5, 5, 1, -1, NULL);");
-      $numrows->execute();
-      */
 }
 
 ?>

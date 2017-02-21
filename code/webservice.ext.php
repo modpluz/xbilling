@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Webservice extension for xBilling ZPanel/Sentora Module
- * Version : 1.2.0
- * @author Aderemi Adewale (modpluz @ Sentora Forums)
+ *
+ * xBilling Module for Sentora 1.0.0
+ * Version : 1.2.1
+ * Author :  Remi Adewale (modpluz @ Sentora Forums)
  * Email : goremmy@gmail.com
- * @desc Authenticate, Execute and Respond to webservice requests
-*/
+ */
 
 class webservice extends ws_xmws {
 

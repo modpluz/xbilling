@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
 <name>xBilling</name>
-<version>1.2.0</version>
+<version>1.2.1</version>
 <defaultcat>Reseller</defaultcat>
 <type>user</type>
-<desc>This module empower ZPanel/Sentora with the ability of billable clients.</desc>
-<authorname>Aderemi Adewale (modpluz @ Sentora Forums)</authorname>
+<desc>This module empower Sentora with the ability of billable clients.</desc>
+<authorname>Remi Adewale (modpluz @ Sentora Forums)</authorname>
 <authoremail>goremmy@gmail.com</authoremail>
 <authorurl>http://remmy.me/</authorurl>
 <updateurl>http://zpx.imerlabs.com/xbilling.xml</updateurl>
